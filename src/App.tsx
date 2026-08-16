@@ -5,6 +5,7 @@ import About from "./components/About/About";
 import Services from "./components/Services/Services";
 import Clients from "./components/Clients/Clients";
 import Reels from "./components/Reels/Reels";
+import YouTube from "./components/YouTube/YouTube";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Services />
       <Clients />
       <Reels />
+      <YouTube />
     </>
   );
 }
