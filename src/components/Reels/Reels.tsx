@@ -1,53 +1,80 @@
+import { useState } from "react";
 import { motion } from "motion/react";
 import "./Reels.css";
 
 const reels = [
   {
-    video: "/reels/reel-1.mp4",
-    client: "Radapola",
+    video:
+      "https://res.cloudinary.com/mxjelcos/video/upload/v1786885539/yulia.mp4",
+    client: "Yulia",
     type: "Video Editing",
   },
   {
-    video: "/reels/reel-2.mp4",
-    client: "Mazu Beach",
-    type: "Social Content",
-  },
-  {
-    video: "/reels/reel-3.mp4",
-    client: "Studio ELITA",
+    video:
+      "https://res.cloudinary.com/mxjelcos/video/upload/v1786885539/yulia.mp4",
+    client: "Yulia",
     type: "Video Editing",
   },
   {
-    video: "/reels/reel-4.mp4",
-    client: "UGC",
-    type: "Content Creation",
+    video:
+      "https://res.cloudinary.com/mxjelcos/video/upload/v1786885539/yulia.mp4",
+    client: "Yulia",
+    type: "Video Editing",
   },
   {
-    video: "/reels/reel-5.mp4",
-    client: "Radapola",
-    type: "Fashion Content",
+    video:
+      "https://res.cloudinary.com/mxjelcos/video/upload/v1786885539/yulia.mp4",
+    client: "Yulia",
+    type: "Video Editing",
   },
   {
-    video: "/reels/reel-6.mp4",
-    client: "Mazu Beach",
-    type: "Social Media",
+    video:
+      "https://res.cloudinary.com/mxjelcos/video/upload/v1786885539/yulia.mp4",
+    client: "Yulia",
+    type: "Video Editing",
   },
 ];
 
 const Reels = () => {
-  const playVideo = (video: HTMLVideoElement) => {
-    video.play().catch(() => {});
+  const [playingVideo, setPlayingVideo] = useState<number | null>(null);
+  const [manuallyPaused, setManuallyPaused] = useState<number | null>(null);
+
+  const playVideo = (video: HTMLVideoElement, index: number) => {
+    if (manuallyPaused === index) return;
+
+    video
+      .play()
+      .then(() => {
+        setPlayingVideo(index);
+      })
+      .catch(() => {});
   };
 
-  const pauseVideo = (video: HTMLVideoElement) => {
+  const pauseVideoOnLeave = (video: HTMLVideoElement, index: number) => {
+    if (manuallyPaused === index) return;
+
     video.pause();
+
+    if (playingVideo === index) {
+      setPlayingVideo(null);
+    }
   };
 
-  const toggleVideo = (video: HTMLVideoElement) => {
+  const toggleVideo = (video: HTMLVideoElement, index: number) => {
     if (video.paused) {
-      playVideo(video);
+      setManuallyPaused(null);
+
+      video
+        .play()
+        .then(() => {
+          setPlayingVideo(index);
+        })
+        .catch(() => {});
     } else {
       video.pause();
+
+      setPlayingVideo(null);
+      setManuallyPaused(index);
     }
   };
 
@@ -96,47 +123,69 @@ const Reels = () => {
 
       <div className="reels__scroller">
         <div className="reels__track">
-          {reels.map((reel, index) => (
-            <motion.article
-              key={`${reel.client}-${index}`}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.15 }}
-              transition={{
-                duration: 0.7,
-                delay: index * 0.05,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="reel-card"
-            >
-              <div className="reel-card__video-wrapper">
-                <video
-                  src={reel.video}
-                  className="reel-card__video"
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  onMouseEnter={(event) => playVideo(event.currentTarget)}
-                  onMouseLeave={(event) => pauseVideo(event.currentTarget)}
-                  onClick={(event) => toggleVideo(event.currentTarget)}
-                />
+          {reels.map((reel, index) => {
+            const isPlaying = playingVideo === index;
+            const isManuallyPaused = manuallyPaused === index;
 
-                <div className="reel-card__overlay">
-                  <span className="reel-card__play">▶</span>
+            return (
+              <motion.article
+                key={`${reel.client}-${index}`}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{
+                  duration: 0.7,
+                  delay: index * 0.05,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className={`reel-card ${isPlaying ? "reel-card--playing" : ""}`}
+              >
+                <div className="reel-card__video-wrapper">
+                  <video
+                    src={reel.video}
+                    className="reel-card__video"
+                    muted
+                    loop
+                    playsInline
+                    preload="none"
+                    onMouseEnter={(event) =>
+                      playVideo(event.currentTarget, index)
+                    }
+                    onMouseLeave={(event) =>
+                      pauseVideoOnLeave(event.currentTarget, index)
+                    }
+                    onClick={(event) => toggleVideo(event.currentTarget, index)}
+                  />
+
+                  <div
+                    className={`reel-card__overlay ${
+                      isManuallyPaused ? "reel-card__overlay--paused" : ""
+                    }`}
+                  >
+                    <span className="reel-card__play">
+                      {isManuallyPaused ? (
+                        <span className="reel-card__pause-icon">
+                          <span></span>
+                          <span></span>
+                        </span>
+                      ) : (
+                        <span className="reel-card__play-icon"></span>
+                      )}
+                    </span>
+                  </div>
+
+                  <span className="reel-card__index">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+
+                  <div className="reel-card__info">
+                    <h3>{reel.client}</h3>
+                    <p>{reel.type}</p>
+                  </div>
                 </div>
-
-                <span className="reel-card__index">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-
-                <div className="reel-card__info">
-                  <h3>{reel.client}</h3>
-                  <p>{reel.type}</p>
-                </div>
-              </div>
-            </motion.article>
-          ))}
+              </motion.article>
+            );
+          })}
         </div>
       </div>
     </section>

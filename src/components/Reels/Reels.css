@@ -115,6 +115,8 @@
 /* CARD */
 
 .reel-card {
+    position: relative;
+
     flex: 0 0 clamp(280px, 22vw, 390px);
 
     transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
@@ -130,7 +132,7 @@
     margin-top: 2rem;
 }
 
-/* VIDEO */
+/* VIDEO WRAPPER */
 
 .reel-card__video-wrapper {
     position: relative;
@@ -156,6 +158,8 @@
     box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
 }
 
+/* VIDEO */
+
 .reel-card__video {
     display: block;
 
@@ -166,16 +170,14 @@
 
     cursor: pointer;
 
-    transition:
-        transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-        filter 0.4s ease;
+    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .reel-card:hover .reel-card__video {
     transform: scale(1.035);
 }
 
-/* GRADIENT OVERLAY */
+/* DARK GRADIENT */
 
 .reel-card__video-wrapper::after {
     content: "";
@@ -183,21 +185,23 @@
     position: absolute;
     inset: 0;
 
+    z-index: 1;
+
     pointer-events: none;
 
     background: linear-gradient(to top,
-            rgba(0, 0, 0, 0.55) 0%,
-            rgba(0, 0, 0, 0.08) 35%,
-            transparent 60%);
+            rgba(0, 0, 0, 0.58) 0%,
+            rgba(0, 0, 0, 0.12) 35%,
+            transparent 62%);
 }
 
-/* PLAY BUTTON */
+/* PLAY / PAUSE OVERLAY */
 
 .reel-card__overlay {
     position: absolute;
     inset: 0;
 
-    z-index: 2;
+    z-index: 4;
 
     display: flex;
     align-items: center;
@@ -205,33 +209,82 @@
 
     pointer-events: none;
 
-    transition: opacity 0.35s ease;
+    opacity: 1;
+
+    transition: opacity 0.3s ease;
 }
 
-.reel-card:hover .reel-card__overlay {
+/* When video is playing, hide the control */
+
+.reel-card--playing .reel-card__overlay {
     opacity: 0;
 }
+
+/* When paused manually, show it again */
+
+.reel-card__overlay--paused {
+    opacity: 1;
+}
+
+/* CONTROL CIRCLE */
 
 .reel-card__play {
     display: flex;
     align-items: center;
     justify-content: center;
 
-    width: 62px;
-    height: 62px;
+    width: 64px;
+    height: 64px;
 
-    padding-left: 4px;
-
-    border: 1px solid rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.72);
     border-radius: 50%;
 
-    background: rgba(20, 20, 20, 0.2);
+    background: rgba(255, 255, 255, 0.045);
 
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
 
-    color: white;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
 
-    font-size: 0.8rem;
+    transition:
+        transform 0.35s ease,
+        background-color 0.35s ease,
+        border-color 0.35s ease;
+}
+
+/* PLAY ICON - CSS ONLY */
+
+.reel-card__play-icon {
+    width: 13px;
+    height: 13px;
+
+    margin-left: -4px;
+
+    border-top: 1.5px solid rgba(255, 255, 255, 0.95);
+    border-right: 1.5px solid rgba(255, 255, 255, 0.95);
+
+    transform: rotate(45deg);
+}
+
+/* PAUSE ICON */
+
+.reel-card__pause-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+}
+
+.reel-card__pause-icon span {
+    display: block;
+
+    width: 2px;
+    height: 17px;
+
+    border-radius: 10px;
+
+    background-color: rgba(255, 255, 255, 0.95);
 }
 
 /* INDEX */
@@ -257,6 +310,7 @@
     letter-spacing: 0.12em;
 
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 /* INFO */
@@ -294,12 +348,6 @@
     opacity: 0.65;
 }
 
-/* IMPORTANT */
-
-.reel-card {
-    position: relative;
-}
-
 /* TABLET */
 
 @media (max-width: 1024px) {
@@ -315,6 +363,11 @@
 
     .reels__scroller {
         padding-left: 2.5rem;
+        padding-right: 2.5rem;
+    }
+
+    .reels__track {
+        padding-right: 2.5rem;
     }
 
     .reel-card {
@@ -359,6 +412,12 @@
         padding-right: 1.5rem;
     }
 
+    .reels__track {
+        gap: 1.25rem;
+
+        padding-right: 1.5rem;
+    }
+
     .reel-card {
         flex-basis: min(76vw, 320px);
     }
@@ -367,11 +426,39 @@
         margin-top: 0;
     }
 
-    .reels__track {
-        gap: 1.25rem;
-    }
-
     .reel-card__video-wrapper {
         border-radius: 18px;
+    }
+
+    .reel-card__play {
+        width: 58px;
+        height: 58px;
+    }
+}
+
+/* SMALL MOBILE */
+
+@media (max-width: 480px) {
+    .reels__header {
+        margin-left: 1.25rem;
+        margin-right: 1.25rem;
+    }
+
+    .reels__intro {
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+    }
+
+    .reels__scroller {
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+    }
+
+    .reels__track {
+        padding-right: 1.25rem;
+    }
+
+    .reel-card {
+        flex-basis: 78vw;
     }
 }
