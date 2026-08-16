@@ -53,24 +53,6 @@ const Clients = () => {
         </div>
       </div>
 
-      <div className="clients__list">
-        {clients.map((client, index) => (
-          <motion.div
-            key={client}
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{
-              duration: 0.6,
-              delay: index * 0.04,
-            }}
-            className="clients__item"
-          >
-            <span>{String(index + 1).padStart(2, "0")}</span>
-            <p>{client}</p>
-          </motion.div>
-        ))}
-      </div>
     </section>
   );
 };
