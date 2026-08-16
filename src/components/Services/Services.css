@@ -67,7 +67,7 @@
 }
 
 .service {
-    overflow: hidden;
+    position: relative;
 
     border-bottom: 1px solid rgba(243, 239, 232, 0.2);
 
@@ -108,7 +108,12 @@
 }
 
 .service__arrow {
+    display: inline-block;
+
+    padding: 0.4rem;
+
     font-size: clamp(1.5rem, 2vw, 2.5rem);
+    line-height: 1;
 
     transition: transform 0.4s ease;
 }
@@ -151,7 +156,7 @@
 }
 
 .service:hover .service__arrow {
-    transform: translate(6px, -6px);
+    transform: translate(4px, -4px);
 }
 
 .service:hover .service__description {
