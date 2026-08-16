@@ -4,6 +4,7 @@ import SelectedWork from "./components/SelectedWork/SelectedWork";
 import About from "./components/About/About";
 import Services from "./components/Services/Services";
 import Clients from "./components/Clients/Clients";
+import Reels from "./components/Reels/Reels";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <About />
       <Services />
       <Clients />
+      <Reels />
     </>
   );
 }
