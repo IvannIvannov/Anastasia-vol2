@@ -116,25 +116,24 @@
     margin-top: 3rem;
     padding: 1rem 0;
 
+    border: 0;
     border-top: 1px solid rgba(24, 23, 20, 0.2);
     border-bottom: 1px solid rgba(24, 23, 20, 0.2);
 
+    background: transparent;
     color: inherit;
-    text-decoration: none;
 
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.14em;
+
+    cursor: pointer;
 }
 
-.about__link span {
+.about__link-arrow {
+    display: inline-block;
+
     font-size: 1.2rem;
-
-    transition: transform 0.3s ease;
-}
-
-.about__link:hover span {
-    transform: translate(5px, -5px);
 }
 
 /* TABLET */
