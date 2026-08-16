@@ -68,9 +68,9 @@ const About = () => {
             </p>
           </motion.div>
 
-          <a href="#contact" className="about__link">
+          <a href="#more-about" className="about__link">
             More about me
-            <span>↗</span>
+            <span>↓</span>
           </a>
         </div>
       </div>
