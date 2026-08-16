@@ -1,0 +1,143 @@
+.hero {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+
+    padding: 7rem 3.5rem 2rem;
+
+    background-color: #f3efe8;
+    color: #181714;
+}
+
+.hero__container {
+    position: relative;
+    min-height: calc(100vh - 9rem);
+}
+
+/* DESCRIPTION */
+
+.hero__description-wrapper {
+    position: relative;
+    z-index: 20;
+
+    display: flex;
+    justify-content: flex-end;
+}
+
+.hero__description {
+    max-width: 280px;
+
+    margin: 0;
+
+    text-align: right;
+    text-transform: uppercase;
+
+    font-size: 0.75rem;
+    line-height: 1.6;
+    letter-spacing: 0.12em;
+}
+
+/* TITLE */
+
+.hero__title-wrapper {
+    position: relative;
+    z-index: 20;
+
+    margin-top: 2.5rem;
+}
+
+.hero__title-line {
+    overflow: hidden;
+}
+
+.hero__title {
+    margin: 0;
+
+    font-size: 15vw;
+    font-weight: 500;
+
+    line-height: 0.76;
+    letter-spacing: -0.075em;
+
+    text-transform: uppercase;
+}
+
+/* BOTTOM */
+
+.hero__bottom {
+    position: relative;
+    z-index: 20;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    margin-top: 4rem;
+    padding-top: 1rem;
+
+    border-top: 1px solid rgba(24, 23, 20, 0.2);
+}
+
+.hero__location,
+.hero__work-link {
+    margin: 0;
+
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+}
+
+.hero__work-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    color: inherit;
+    text-decoration: none;
+}
+
+.hero__arrow {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.hero__work-link:hover .hero__arrow {
+    transform: translateY(4px);
+}
+
+/* TABLET */
+
+@media (max-width: 1024px) {
+    .hero {
+        padding-left: 2.5rem;
+        padding-right: 2.5rem;
+    }
+
+    .hero__image-wrapper {
+        width: 48%;
+    }
+}
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 7rem 1.5rem 2rem;
+    }
+
+    .hero__description {
+        font-size: 0.7rem;
+    }
+
+    .hero__title {
+        font-size: 15vw;
+    }
+
+    .hero__image-wrapper {
+        width: 72%;
+    }
+
+    .hero__bottom {
+        margin-top: 3rem;
+    }
+}

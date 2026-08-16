@@ -1,20 +1,33 @@
-import { motion } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
+import { useRef } from "react";
+import "./Hero.css";
 
 const Hero = () => {
-  return (
-    <section className="relative min-h-screen overflow-hidden bg-[#f3efe8] px-6 pb-10 pt-28 text-[#181714] md:px-10 lg:px-14">
-      <div className="flex min-h-[calc(100vh-9rem)] flex-col justify-between">
-        <div>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="mb-8 max-w-sm text-sm leading-relaxed md:ml-auto"
-          >
-            Video Editor · Graphic Designer · UGC Creator · Social Media Manager
-          </motion.p>
+  const sectionRef = useRef<HTMLElement>(null);
 
-          <div className="overflow-hidden">
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+
+  const titleY = useTransform(scrollYProgress, [0, 1], [0, -50]);
+
+  return (
+    <section ref={sectionRef} className="hero">
+      <div className="hero__container">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="hero__description-wrapper"
+        >
+          <p className="hero__description">
+            Video Editor · Graphic Designer · UGC Creator · Social Media Manager
+          </p>
+        </motion.div>
+
+        <motion.div style={{ y: titleY }} className="hero__title-wrapper">
+          <div className="hero__title-line">
             <motion.h1
               initial={{ y: "110%" }}
               animate={{ y: 0 }}
@@ -22,13 +35,13 @@ const Hero = () => {
                 duration: 1,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="text-[15vw] font-medium uppercase leading-[0.78] tracking-[-0.075em]"
+              className="hero__title"
             >
               Anastasia
             </motion.h1>
           </div>
 
-          <div className="overflow-hidden">
+          <div className="hero__title-line">
             <motion.h1
               initial={{ y: "110%" }}
               animate={{ y: 0 }}
@@ -37,31 +50,27 @@ const Hero = () => {
                 delay: 0.12,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="text-[15vw] font-medium uppercase leading-[0.78] tracking-[-0.075em]"
+              className="hero__title"
             >
               Paskaleva
             </motion.h1>
           </div>
-        </div>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.9, duration: 0.8 }}
-          className="mt-16 flex items-end justify-between border-t border-black/20 pt-4"
+          transition={{
+            delay: 1,
+            duration: 0.8,
+          }}
+          className="hero__bottom"
         >
-          <p className="text-xs uppercase tracking-[0.14em]">
-            Plovdiv · Bulgaria
-          </p>
+          <p className="hero__location">Plovdiv · Bulgaria</p>
 
-          <a
-            href="#work"
-            className="group flex items-center gap-3 text-xs uppercase tracking-[0.14em]"
-          >
+          <a href="#work" className="hero__work-link">
             Selected work
-            <span className="transition-transform duration-300 group-hover:translate-y-1">
-              ↓
-            </span>
+            <span className="hero__arrow">↓</span>
           </a>
         </motion.div>
       </div>
