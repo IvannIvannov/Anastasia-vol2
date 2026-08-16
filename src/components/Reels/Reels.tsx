@@ -129,11 +129,11 @@ const Reels = () => {
                 <span className="reel-card__index">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-              </div>
 
-              <div className="reel-card__info">
-                <h3>{reel.client}</h3>
-                <p>{reel.type}</p>
+                <div className="reel-card__info">
+                  <h3>{reel.client}</h3>
+                  <p>{reel.type}</p>
+                </div>
               </div>
             </motion.article>
           ))}

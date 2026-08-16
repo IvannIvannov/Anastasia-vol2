@@ -1,7 +1,7 @@
 .reels {
     overflow: hidden;
 
-    padding: 8rem 0 9rem;
+    padding: 8rem 0 10rem;
 
     background-color: #181714;
     color: #f3efe8;
@@ -33,7 +33,7 @@
 
 .reels__intro {
     display: grid;
-    grid-template-columns: 1.35fr 0.65fr;
+    grid-template-columns: 1.3fr 0.7fr;
 
     gap: 4rem;
 
@@ -43,7 +43,7 @@
 .reels__title {
     margin: 0;
 
-    font-size: clamp(4rem, 9vw, 11rem);
+    font-size: clamp(4.5rem, 9vw, 11rem);
     font-weight: 400;
 
     line-height: 0.84;
@@ -60,7 +60,7 @@
 }
 
 .reels__description {
-    max-width: 390px;
+    max-width: 400px;
 
     margin: 0;
 
@@ -79,7 +79,7 @@
     opacity: 0.45;
 }
 
-/* HORIZONTAL SCROLLER */
+/* SCROLLER */
 
 .reels__scroller {
     width: 100%;
@@ -87,7 +87,7 @@
     overflow-x: auto;
     overflow-y: hidden;
 
-    padding: 0 3.5rem 2rem;
+    padding: 0 3.5rem 3rem;
 
     scrollbar-width: none;
 
@@ -106,16 +106,31 @@
     display: flex;
     align-items: flex-start;
 
-    gap: 1.25rem;
+    gap: 2rem;
 
     width: max-content;
+    padding-right: 3.5rem;
 }
 
-/* REEL CARD */
+/* CARD */
 
 .reel-card {
-    flex: 0 0 clamp(180px, 15vw, 245px);
+    flex: 0 0 clamp(280px, 22vw, 390px);
+
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+/* STAGGER */
+
+.reel-card:nth-child(2n) {
+    margin-top: 5rem;
+}
+
+.reel-card:nth-child(3n) {
+    margin-top: 2rem;
+}
+
+/* VIDEO */
 
 .reel-card__video-wrapper {
     position: relative;
@@ -124,7 +139,21 @@
 
     aspect-ratio: 9 / 16;
 
+    border-radius: 22px;
+
     background-color: #292824;
+
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.25);
+
+    transition:
+        transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.5s ease;
+}
+
+.reel-card:hover .reel-card__video-wrapper {
+    transform: translateY(-10px) scale(1.015);
+
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
 }
 
 .reel-card__video {
@@ -138,19 +167,37 @@
     cursor: pointer;
 
     transition:
-        transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
         filter 0.4s ease;
 }
 
 .reel-card:hover .reel-card__video {
-    transform: scale(1.025);
+    transform: scale(1.035);
 }
 
-/* OVERLAY */
+/* GRADIENT OVERLAY */
+
+.reel-card__video-wrapper::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    background: linear-gradient(to top,
+            rgba(0, 0, 0, 0.55) 0%,
+            rgba(0, 0, 0, 0.08) 35%,
+            transparent 60%);
+}
+
+/* PLAY BUTTON */
 
 .reel-card__overlay {
     position: absolute;
     inset: 0;
+
+    z-index: 2;
 
     display: flex;
     align-items: center;
@@ -158,9 +205,7 @@
 
     pointer-events: none;
 
-    background-color: rgba(0, 0, 0, 0.08);
-
-    transition: opacity 0.3s ease;
+    transition: opacity 0.35s ease;
 }
 
 .reel-card:hover .reel-card__overlay {
@@ -172,20 +217,21 @@
     align-items: center;
     justify-content: center;
 
-    width: 46px;
-    height: 46px;
+    width: 62px;
+    height: 62px;
 
-    padding-left: 3px;
+    padding-left: 4px;
 
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.55);
     border-radius: 50%;
 
-    background-color: rgba(0, 0, 0, 0.12);
-    backdrop-filter: blur(6px);
+    background: rgba(20, 20, 20, 0.2);
+
+    backdrop-filter: blur(10px);
 
     color: white;
 
-    font-size: 0.7rem;
+    font-size: 0.8rem;
 }
 
 /* INDEX */
@@ -193,45 +239,65 @@
 .reel-card__index {
     position: absolute;
 
-    top: 0.8rem;
-    left: 0.8rem;
+    top: 1rem;
+    left: 1rem;
 
-    padding: 0.35rem 0.5rem;
+    z-index: 3;
 
-    background-color: rgba(24, 23, 20, 0.45);
+    padding: 0.45rem 0.65rem;
+
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+
+    background-color: rgba(24, 23, 20, 0.25);
 
     color: white;
 
-    font-size: 0.58rem;
+    font-size: 0.6rem;
     letter-spacing: 0.12em;
 
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(12px);
 }
 
 /* INFO */
 
 .reel-card__info {
-    padding-top: 1rem;
+    position: absolute;
+
+    z-index: 3;
+
+    left: 1.25rem;
+    right: 1.25rem;
+    bottom: 1.25rem;
+
+    color: white;
 }
 
 .reel-card__info h3 {
     margin: 0;
 
-    font-size: 1.15rem;
+    font-size: clamp(1.3rem, 1.7vw, 1.8rem);
     font-weight: 400;
 
-    letter-spacing: -0.025em;
+    line-height: 1;
+    letter-spacing: -0.035em;
 }
 
 .reel-card__info p {
-    margin: 0.35rem 0 0;
+    margin: 0.55rem 0 0;
 
     font-size: 0.65rem;
 
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.13em;
 
-    opacity: 0.45;
+    opacity: 0.65;
+}
+
+/* IMPORTANT */
+
+.reel-card {
+    position: relative;
 }
 
 /* TABLET */
@@ -249,11 +315,14 @@
 
     .reels__scroller {
         padding-left: 2.5rem;
-        padding-right: 2.5rem;
     }
 
     .reel-card {
-        flex-basis: 210px;
+        flex-basis: 310px;
+    }
+
+    .reel-card:nth-child(2n) {
+        margin-top: 3rem;
     }
 }
 
@@ -291,6 +360,18 @@
     }
 
     .reel-card {
-        flex-basis: 190px;
+        flex-basis: min(76vw, 320px);
+    }
+
+    .reel-card:nth-child(n) {
+        margin-top: 0;
+    }
+
+    .reels__track {
+        gap: 1.25rem;
+    }
+
+    .reel-card__video-wrapper {
+        border-radius: 18px;
     }
 }
