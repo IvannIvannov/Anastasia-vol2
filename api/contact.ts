@@ -10,6 +10,15 @@ const allowedProjectTypes = [
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+interface TurnstileResponse {
+  success: boolean;
+  "error-codes"?: string[];
+  challenge_ts?: string;
+  hostname?: string;
+  action?: string;
+  cdata?: string;
+}
+
 function escapeHtml(value: string) {
   return value
     .replaceAll("&", "&amp;")
@@ -29,14 +38,17 @@ export default {
         },
         {
           status: 405,
-        }
+        },
       );
     }
 
     const resendApiKey = process.env.RESEND_API_KEY;
+
     const contactEmail = process.env.CONTACT_EMAIL;
 
-    if (!resendApiKey || !contactEmail) {
+    const turnstileSecretKey = process.env.TURNSTILE_SECRET_KEY;
+
+    if (!resendApiKey || !contactEmail || !turnstileSecretKey) {
       console.error("Missing server environment variables.");
 
       return Response.json(
@@ -46,11 +58,9 @@ export default {
         },
         {
           status: 500,
-        }
+        },
       );
     }
-
-    const resend = new Resend(resendApiKey);
 
     try {
       const body = (await request.json()) as {
@@ -60,6 +70,7 @@ export default {
         projectType?: unknown;
         message?: unknown;
         website?: unknown;
+        turnstileToken?: unknown;
       };
 
       const {
@@ -69,13 +80,13 @@ export default {
         projectType,
         message,
         website,
+        turnstileToken,
       } = body;
 
-      // Honeypot
-      if (
-        typeof website === "string" &&
-        website.trim() !== ""
-      ) {
+      /*
+       * Honeypot
+       */
+      if (typeof website === "string" && website.trim() !== "") {
         return Response.json(
           {
             success: true,
@@ -83,10 +94,93 @@ export default {
           },
           {
             status: 200,
-          }
+          },
         );
       }
 
+      /*
+       * Turnstile token
+       */
+      if (typeof turnstileToken !== "string" || !turnstileToken.trim()) {
+        return Response.json(
+          {
+            success: false,
+            error: "Verification required.",
+          },
+          {
+            status: 400,
+          },
+        );
+      }
+
+      /*
+       * Cloudflare Siteverify
+       */
+      const verificationBody = new URLSearchParams();
+
+      verificationBody.append("secret", turnstileSecretKey);
+
+      verificationBody.append("response", turnstileToken);
+
+      const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+
+      if (ip) {
+        verificationBody.append("remoteip", ip);
+      }
+
+      const turnstileResponse = await fetch(
+        "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+
+          body: verificationBody,
+        },
+      );
+
+      if (!turnstileResponse.ok) {
+        console.error(
+          "Turnstile Siteverify request failed:",
+          turnstileResponse.status,
+        );
+
+        return Response.json(
+          {
+            success: false,
+            error: "Verification service unavailable.",
+          },
+          {
+            status: 502,
+          },
+        );
+      }
+
+      const verification =
+        (await turnstileResponse.json()) as TurnstileResponse;
+
+      if (!verification.success) {
+        console.error(
+          "Turnstile verification failed:",
+          verification["error-codes"],
+        );
+
+        return Response.json(
+          {
+            success: false,
+            error: "Verification failed. Please try again.",
+          },
+          {
+            status: 400,
+          },
+        );
+      }
+
+      /*
+       * Form validation
+       */
       if (
         typeof name !== "string" ||
         typeof email !== "string" ||
@@ -100,25 +194,21 @@ export default {
           },
           {
             status: 400,
-          }
+          },
         );
       }
 
       const cleanName = name.trim();
+
       const cleanEmail = email.trim().toLowerCase();
 
-      const cleanBrand =
-        typeof brand === "string" ? brand.trim() : "";
+      const cleanBrand = typeof brand === "string" ? brand.trim() : "";
 
       const cleanProjectType = projectType.trim();
+
       const cleanMessage = message.trim();
 
-      if (
-        !cleanName ||
-        !cleanEmail ||
-        !cleanProjectType ||
-        !cleanMessage
-      ) {
+      if (!cleanName || !cleanEmail || !cleanProjectType || !cleanMessage) {
         return Response.json(
           {
             success: false,
@@ -126,7 +216,7 @@ export default {
           },
           {
             status: 400,
-          }
+          },
         );
       }
 
@@ -138,14 +228,11 @@ export default {
           },
           {
             status: 400,
-          }
+          },
         );
       }
 
-      if (
-        cleanEmail.length > 150 ||
-        !emailRegex.test(cleanEmail)
-      ) {
+      if (cleanEmail.length > 150 || !emailRegex.test(cleanEmail)) {
         return Response.json(
           {
             success: false,
@@ -153,7 +240,7 @@ export default {
           },
           {
             status: 400,
-          }
+          },
         );
       }
 
@@ -165,13 +252,11 @@ export default {
           },
           {
             status: 400,
-          }
+          },
         );
       }
 
-      if (
-        !allowedProjectTypes.includes(cleanProjectType)
-      ) {
+      if (!allowedProjectTypes.includes(cleanProjectType)) {
         return Response.json(
           {
             success: false,
@@ -179,7 +264,7 @@ export default {
           },
           {
             status: 400,
-          }
+          },
         );
       }
 
@@ -191,39 +276,51 @@ export default {
           },
           {
             status: 400,
-          }
+          },
         );
       }
 
       const projectTypeLabels: Record<string, string> = {
         "video-editing": "Video Editing",
+
         "graphic-design": "Graphic Design",
+
         ugc: "UGC Creation",
+
         "social-media": "Social Media Management",
+
         other: "Other",
       };
 
       const projectLabel =
-        projectTypeLabels[cleanProjectType] ||
-        cleanProjectType;
+        projectTypeLabels[cleanProjectType] || cleanProjectType;
 
-      const { data, error } =
-        await resend.emails.send({
-          from: "Anastasia Portfolio <onboarding@resend.dev>",
-          to: [contactEmail],
-          replyTo: cleanEmail,
-          subject: `New portfolio inquiry from ${cleanName}`,
+      const resend = new Resend(resendApiKey);
 
-          html: `
+      const { data, error } = await resend.emails.send({
+        from: "Anastasia Portfolio <onboarding@resend.dev>",
+
+        to: [contactEmail],
+
+        replyTo: cleanEmail,
+
+        subject: `New portfolio inquiry from ${cleanName}`,
+
+        html: `
             <!DOCTYPE html>
+
             <html lang="en">
               <head>
                 <meta charset="UTF-8" />
+
                 <meta
                   name="viewport"
                   content="width=device-width, initial-scale=1.0"
                 />
-                <title>New Portfolio Inquiry</title>
+
+                <title>
+                  New Portfolio Inquiry
+                </title>
               </head>
 
               <body
@@ -281,36 +378,70 @@ export default {
                         padding-top: 24px;
                       "
                     >
-                      <p style="margin: 0 0 18px;">
-                        <strong>Name</strong><br />
+                      <p
+                        style="
+                          margin: 0 0 18px;
+                        "
+                      >
+                        <strong>
+                          Name
+                        </strong>
+
+                        <br />
+
                         ${escapeHtml(cleanName)}
                       </p>
 
-                      <p style="margin: 0 0 18px;">
-                        <strong>Email</strong><br />
+                      <p
+                        style="
+                          margin: 0 0 18px;
+                        "
+                      >
+                        <strong>
+                          Email
+                        </strong>
+
+                        <br />
+
                         ${escapeHtml(cleanEmail)}
                       </p>
 
-                      <p style="margin: 0 0 18px;">
+                      <p
+                        style="
+                          margin: 0 0 18px;
+                        "
+                      >
                         <strong>
                           Company / Brand
                         </strong>
+
                         <br />
 
-                        ${
-                          cleanBrand
-                            ? escapeHtml(cleanBrand)
-                            : "Not provided"
-                        }
+                        ${cleanBrand ? escapeHtml(cleanBrand) : "Not provided"}
                       </p>
 
-                      <p style="margin: 0 0 18px;">
-                        <strong>Project type</strong><br />
+                      <p
+                        style="
+                          margin: 0 0 18px;
+                        "
+                      >
+                        <strong>
+                          Project type
+                        </strong>
+
+                        <br />
+
                         ${escapeHtml(projectLabel)}
                       </p>
 
-                      <p style="margin: 0 0 8px;">
-                        <strong>Message</strong>
+                      <p
+                        style="
+                          margin: 0 0 8px;
+                        "
+                      >
+                        <strong>
+                          Message
+                        </strong>
                       </p>
 
                       <div
@@ -326,30 +457,23 @@ export default {
               </body>
             </html>
           `,
-        });
+      });
 
       if (error) {
-        console.error(
-          "[Resend API Error]:",
-          error
-        );
+        console.error("[Resend API Error]:", error);
 
         return Response.json(
           {
             success: false,
-            error:
-              "Unable to send your inquiry. Please try again.",
+            error: "Unable to send your inquiry. Please try again.",
           },
           {
             status: 500,
-          }
+          },
         );
       }
 
-      console.log(
-        "Contact email sent:",
-        data?.id
-      );
+      console.log("Contact email sent:", data?.id);
 
       return Response.json(
         {
@@ -358,13 +482,10 @@ export default {
         },
         {
           status: 200,
-        }
+        },
       );
     } catch (error) {
-      console.error(
-        "Contact API error:",
-        error
-      );
+      console.error("Contact API error:", error);
 
       return Response.json(
         {
@@ -373,7 +494,7 @@ export default {
         },
         {
           status: 500,
-        }
+        },
       );
     }
   },

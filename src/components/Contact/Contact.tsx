@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ChangeEvent, SubmitEvent } from "react";
 import { motion } from "motion/react";
 import "./Contact.css";
@@ -14,6 +14,29 @@ interface ContactFormData {
   website: string;
 }
 
+interface TurnstileInstance {
+  render: (
+    container: HTMLElement,
+    options: {
+      sitekey: string;
+      theme?: "light" | "dark" | "auto";
+      size?: "normal" | "compact" | "flexible";
+      callback?: (token: string) => void;
+      "error-callback"?: () => void;
+      "expired-callback"?: () => void;
+    },
+  ) => string;
+
+  reset: (widgetId?: string) => void;
+  remove: (widgetId: string) => void;
+}
+
+declare global {
+  interface Window {
+    turnstile?: TurnstileInstance;
+  }
+}
+
 const initialFormData: ContactFormData = {
   name: "",
   email: "",
@@ -27,6 +50,99 @@ export default function Contact() {
   const [formData, setFormData] = useState<ContactFormData>(initialFormData);
 
   const [status, setStatus] = useState<FormStatus>("idle");
+
+  const [turnstileToken, setTurnstileToken] = useState("");
+
+  const turnstileContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const turnstileWidgetIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+
+    if (!siteKey) {
+      console.error("Missing VITE_TURNSTILE_SITE_KEY.");
+
+      return;
+    }
+
+    const renderTurnstile = () => {
+      if (
+        !window.turnstile ||
+        !turnstileContainerRef.current ||
+        turnstileWidgetIdRef.current
+      ) {
+        return;
+      }
+
+      turnstileWidgetIdRef.current = window.turnstile.render(
+        turnstileContainerRef.current,
+        {
+          sitekey: siteKey,
+          theme: "dark",
+          size: "flexible",
+
+          callback: (token) => {
+            setTurnstileToken(token);
+          },
+
+          "expired-callback": () => {
+            setTurnstileToken("");
+          },
+
+          "error-callback": () => {
+            setTurnstileToken("");
+          },
+        },
+      );
+    };
+
+    const existingScript = document.querySelector<HTMLScriptElement>(
+      'script[src*="challenges.cloudflare.com/turnstile"]',
+    );
+
+    if (existingScript) {
+      if (window.turnstile) {
+        renderTurnstile();
+      } else {
+        existingScript.addEventListener("load", renderTurnstile);
+      }
+
+      return () => {
+        existingScript.removeEventListener("load", renderTurnstile);
+      };
+    }
+
+    const script = document.createElement("script");
+
+    script.src =
+      "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+
+    script.async = true;
+    script.defer = true;
+
+    script.addEventListener("load", renderTurnstile);
+
+    document.head.appendChild(script);
+
+    return () => {
+      script.removeEventListener("load", renderTurnstile);
+
+      if (turnstileWidgetIdRef.current && window.turnstile) {
+        window.turnstile.remove(turnstileWidgetIdRef.current);
+
+        turnstileWidgetIdRef.current = null;
+      }
+    };
+  }, []);
+
+  const resetTurnstile = () => {
+    if (window.turnstile && turnstileWidgetIdRef.current) {
+      window.turnstile.reset(turnstileWidgetIdRef.current);
+    }
+
+    setTurnstileToken("");
+  };
 
   const handleChange = (
     event: ChangeEvent<
@@ -48,17 +164,29 @@ export default function Contact() {
   const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (status === "sending") return;
+    if (status === "sending") {
+      return;
+    }
+
+    if (!turnstileToken) {
+      setStatus("error");
+      return;
+    }
 
     setStatus("sending");
 
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
+
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+
+        body: JSON.stringify({
+          ...formData,
+          turnstileToken,
+        }),
       });
 
       let data: {
@@ -70,49 +198,67 @@ export default function Contact() {
       try {
         data = await response.json();
       } catch {
-        // Ако API-то не върне JSON,
-        // показваме нормално error съобщение.
+        // Невалиден server response.
       }
 
       if (!response.ok) {
-        throw new Error(
-          data.error || "Something went wrong. Please try again.",
-        );
+        throw new Error(data.error || "Something went wrong.");
       }
 
       setStatus("success");
+
       setFormData(initialFormData);
+
+      resetTurnstile();
     } catch (error) {
       console.error("Contact form error:", error);
+
       setStatus("error");
+
+      resetTurnstile();
     }
   };
 
   return (
     <section className="contact" id="contact">
-      {/* HEADER */}
       <motion.div
         className="contact__header"
-        initial={{ opacity: 0, y: 15 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
+        initial={{
+          opacity: 0,
+          y: 15,
+        }}
+        whileInView={{
+          opacity: 1,
+          y: 0,
+        }}
+        viewport={{
+          once: true,
+        }}
         transition={{
           duration: 0.6,
           ease: [0.22, 1, 0.36, 1],
         }}
       >
         <p className="contact__label">Contact</p>
+
         <p className="contact__number">(07)</p>
       </motion.div>
 
-      {/* MAIN LAYOUT */}
       <div className="contact__layout">
-        {/* LEFT SIDE */}
         <motion.div
           className="contact__intro"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
+          initial={{
+            opacity: 0,
+            y: 40,
+          }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+          }}
+          viewport={{
+            once: true,
+            amount: 0.2,
+          }}
           transition={{
             duration: 0.8,
             ease: [0.22, 1, 0.36, 1],
@@ -144,20 +290,27 @@ export default function Contact() {
           </div>
         </motion.div>
 
-        {/* FORM */}
         <motion.form
           className="contact-form"
           onSubmit={handleSubmit}
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.15 }}
+          initial={{
+            opacity: 0,
+            y: 40,
+          }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+          }}
+          viewport={{
+            once: true,
+            amount: 0.15,
+          }}
           transition={{
             duration: 0.8,
             delay: 0.1,
             ease: [0.22, 1, 0.36, 1],
           }}
         >
-          {/* ROW 1 */}
           <div className="contact-form__row">
             <div className="contact-form__field">
               <label htmlFor="name">Name *</label>
@@ -190,7 +343,6 @@ export default function Contact() {
             </div>
           </div>
 
-          {/* ROW 2 */}
           <div className="contact-form__row">
             <div className="contact-form__field">
               <label htmlFor="brand">Company / Brand</label>
@@ -233,7 +385,6 @@ export default function Contact() {
             </div>
           </div>
 
-          {/* MESSAGE */}
           <div className="contact-form__field contact-form__field--message">
             <label htmlFor="message">Tell me about your project *</label>
 
@@ -248,7 +399,6 @@ export default function Contact() {
             />
           </div>
 
-          {/* HONEYPOT */}
           <input
             className="contact-form__honeypot"
             type="text"
@@ -260,14 +410,24 @@ export default function Contact() {
             aria-hidden="true"
           />
 
-          {/* BOTTOM */}
+          <div
+            className="contact-form__turnstile"
+            ref={turnstileContainerRef}
+          />
+
           <div className="contact-form__bottom">
             <div className="contact-form__status">
               {status === "success" && (
                 <motion.p
                   className="contact-form__success"
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{
+                    opacity: 0,
+                    y: 5,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
                 >
                   Thank you! Your inquiry has been sent successfully.
                 </motion.p>
@@ -276,10 +436,16 @@ export default function Contact() {
               {status === "error" && (
                 <motion.p
                   className="contact-form__error"
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{
+                    opacity: 0,
+                    y: 5,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
                 >
-                  Something went wrong. Please try again.
+                  Please complete the verification and try again.
                 </motion.p>
               )}
             </div>
@@ -301,7 +467,6 @@ export default function Contact() {
         </motion.form>
       </div>
 
-      {/* FOOTER */}
       <div className="contact__footer">
         <p>© 2026 Anastasia Paskaleva</p>
 
