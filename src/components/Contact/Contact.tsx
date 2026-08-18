@@ -23,11 +23,10 @@ const initialFormData: ContactFormData = {
   website: "",
 };
 
-const Contact = () => {
+export default function Contact() {
   const [formData, setFormData] = useState<ContactFormData>(initialFormData);
 
   const [status, setStatus] = useState<FormStatus>("idle");
-  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (
     event: ChangeEvent<
@@ -36,71 +35,88 @@ const Contact = () => {
   ) => {
     const { name, value } = event.target;
 
-    setFormData((current) => ({
-      ...current,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
     }));
+
+    if (status === "success" || status === "error") {
+      setStatus("idle");
+    }
   };
 
   const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (status === "sending") {
-      return;
-    }
+    if (status === "sending") return;
 
     setStatus("sending");
-    setErrorMessage("");
 
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
-
         headers: {
           "Content-Type": "application/json",
         },
-
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
+      let data: {
+        success?: boolean;
+        message?: string;
+        error?: string;
+      } = {};
+
+      try {
+        data = await response.json();
+      } catch {
+        // Ако API-то не върне JSON,
+        // показваме нормално error съобщение.
+      }
 
       if (!response.ok) {
         throw new Error(
-          data.message || "Something went wrong. Please try again.",
+          data.error || "Something went wrong. Please try again.",
         );
       }
 
       setStatus("success");
       setFormData(initialFormData);
     } catch (error) {
+      console.error("Contact form error:", error);
       setStatus("error");
-
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "Something went wrong. Please try again.",
-      );
     }
   };
 
   return (
-    <section id="contact" className="contact">
-      <div className="contact__header">
+    <section className="contact" id="contact">
+      {/* HEADER */}
+      <motion.div
+        className="contact__header"
+        initial={{ opacity: 0, y: 15 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{
+          duration: 0.6,
+          ease: [0.22, 1, 0.36, 1],
+        }}
+      >
         <p className="contact__label">Contact</p>
-        <span className="contact__number">06</span>
-      </div>
+        <p className="contact__number">(07)</p>
+      </motion.div>
 
+      {/* MAIN LAYOUT */}
       <div className="contact__layout">
+        {/* LEFT SIDE */}
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          className="contact__intro"
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{
-            duration: 0.9,
+            duration: 0.8,
             ease: [0.22, 1, 0.36, 1],
           }}
-          className="contact__intro"
         >
           <h2 className="contact__title">
             Let&apos;s work
@@ -122,38 +138,39 @@ const Contact = () => {
 
               <div>
                 <span>Available for</span>
-                <p>Projects & collaborations</p>
+                <p>Projects &amp; collaborations</p>
               </div>
             </div>
           </div>
         </motion.div>
 
+        {/* FORM */}
         <motion.form
+          className="contact-form"
+          onSubmit={handleSubmit}
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.1 }}
+          viewport={{ once: true, amount: 0.15 }}
           transition={{
-            duration: 0.85,
+            duration: 0.8,
             delay: 0.1,
             ease: [0.22, 1, 0.36, 1],
           }}
-          className="contact-form"
-          onSubmit={handleSubmit}
         >
+          {/* ROW 1 */}
           <div className="contact-form__row">
             <div className="contact-form__field">
               <label htmlFor="name">Name *</label>
 
               <input
                 id="name"
-                name="name"
                 type="text"
+                name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="Your name"
-                autoComplete="name"
-                maxLength={80}
                 required
+                maxLength={100}
+                autoComplete="name"
               />
             </div>
 
@@ -162,30 +179,30 @@ const Contact = () => {
 
               <input
                 id="email"
-                name="email"
                 type="email"
+                name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="you@example.com"
-                autoComplete="email"
-                maxLength={120}
                 required
+                maxLength={150}
+                autoComplete="email"
               />
             </div>
           </div>
 
+          {/* ROW 2 */}
           <div className="contact-form__row">
             <div className="contact-form__field">
               <label htmlFor="brand">Company / Brand</label>
 
               <input
                 id="brand"
-                name="brand"
                 type="text"
+                name="brand"
                 value={formData.brand}
                 onChange={handleChange}
-                placeholder="Your brand"
-                maxLength={100}
+                maxLength={150}
+                autoComplete="organization"
               />
             </div>
 
@@ -216,6 +233,7 @@ const Contact = () => {
             </div>
           </div>
 
+          {/* MESSAGE */}
           <div className="contact-form__field contact-form__field--message">
             <label htmlFor="message">Tell me about your project *</label>
 
@@ -224,68 +242,74 @@ const Contact = () => {
               name="message"
               value={formData.message}
               onChange={handleChange}
-              placeholder="A few details about your project, timeline and what you're looking for..."
-              rows={6}
-              minLength={10}
-              maxLength={2000}
               required
+              maxLength={3000}
+              rows={6}
             />
           </div>
 
-          {/* Honeypot - hidden from real visitors */}
+          {/* HONEYPOT */}
+          <input
+            className="contact-form__honeypot"
+            type="text"
+            name="website"
+            value={formData.website}
+            onChange={handleChange}
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+          />
 
-          <div className="contact-form__honeypot" aria-hidden="true">
-            <label htmlFor="website">Website</label>
-
-            <input
-              id="website"
-              name="website"
-              type="text"
-              value={formData.website}
-              onChange={handleChange}
-              tabIndex={-1}
-              autoComplete="off"
-            />
-          </div>
-
+          {/* BOTTOM */}
           <div className="contact-form__bottom">
-            <div className="contact-form__status" aria-live="polite">
+            <div className="contact-form__status">
               {status === "success" && (
-                <p className="contact-form__success">
-                  Thank you — your message has been sent.
-                </p>
+                <motion.p
+                  className="contact-form__success"
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  Thank you! Your inquiry has been sent successfully.
+                </motion.p>
               )}
 
               {status === "error" && (
-                <p className="contact-form__error">{errorMessage}</p>
+                <motion.p
+                  className="contact-form__error"
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  Something went wrong. Please try again.
+                </motion.p>
               )}
             </div>
 
             <button
-              type="submit"
               className="contact-form__submit"
+              type="submit"
               disabled={status === "sending"}
             >
               <span>
                 {status === "sending" ? "Sending..." : "Send inquiry"}
               </span>
 
-              <span className="contact-form__arrow">↗</span>
+              <span className="contact-form__arrow" aria-hidden="true">
+                ↗
+              </span>
             </button>
           </div>
         </motion.form>
       </div>
 
-      <footer className="contact__footer">
+      {/* FOOTER */}
+      <div className="contact__footer">
         <p>© 2026 Anastasia Paskaleva</p>
 
-        <a href="#" className="contact__back-top">
+        <a href="#top" className="contact__back-top" aria-label="Back to top">
           Back to top
-          <span>↑</span>
+          <span aria-hidden="true">↑</span>
         </a>
-      </footer>
+      </div>
     </section>
   );
-};
-
-export default Contact;
+}

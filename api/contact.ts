@@ -1,341 +1,379 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const allowedProjectTypes = [
+  "video-editing",
+  "graphic-design",
+  "ugc",
+  "social-media",
+  "other",
+];
 
-const MAX_NAME_LENGTH = 80;
-const MAX_EMAIL_LENGTH = 120;
-const MAX_BRAND_LENGTH = 100;
-const MAX_MESSAGE_LENGTH = 2000;
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-interface ContactRequest {
-  name?: unknown;
-  email?: unknown;
-  brand?: unknown;
-  projectType?: unknown;
-  message?: unknown;
-  website?: unknown;
-}
-
-const isString = (value: unknown): value is string => {
-  return typeof value === "string";
-};
-
-const isValidEmail = (email: string) => {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-};
-
-const escapeHtml = (value: string) => {
+function escapeHtml(value: string) {
   return value
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
-};
+}
 
 export default {
   async fetch(request: Request) {
     if (request.method !== "POST") {
       return Response.json(
         {
-          message: "Method not allowed.",
+          success: false,
+          error: "Method not allowed.",
         },
         {
           status: 405,
-        },
+        }
       );
     }
 
+    const resendApiKey = process.env.RESEND_API_KEY;
+    const contactEmail = process.env.CONTACT_EMAIL;
+
+    if (!resendApiKey || !contactEmail) {
+      console.error("Missing server environment variables.");
+
+      return Response.json(
+        {
+          success: false,
+          error: "Server configuration error.",
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+
+    const resend = new Resend(resendApiKey);
+
     try {
-      const body = (await request.json()) as ContactRequest;
+      const body = (await request.json()) as {
+        name?: unknown;
+        email?: unknown;
+        brand?: unknown;
+        projectType?: unknown;
+        message?: unknown;
+        website?: unknown;
+      };
 
-      const { name, email, brand, projectType, message, website } = body;
+      const {
+        name,
+        email,
+        brand,
+        projectType,
+        message,
+        website,
+      } = body;
 
-      /*
-       * Honeypot.
-       * Real users never see this field.
-       * Basic bots often fill it automatically.
-       */
-      if (isString(website) && website.trim() !== "") {
-        return Response.json({
-          message: "Message sent successfully.",
-        });
-      }
-
+      // Honeypot
       if (
-        !isString(name) ||
-        !isString(email) ||
-        !isString(projectType) ||
-        !isString(message)
+        typeof website === "string" &&
+        website.trim() !== ""
       ) {
         return Response.json(
           {
-            message: "Please complete all required fields.",
+            success: true,
+            message: "Inquiry sent successfully.",
+          },
+          {
+            status: 200,
+          }
+        );
+      }
+
+      if (
+        typeof name !== "string" ||
+        typeof email !== "string" ||
+        typeof projectType !== "string" ||
+        typeof message !== "string"
+      ) {
+        return Response.json(
+          {
+            success: false,
+            error: "Please complete all required fields.",
           },
           {
             status: 400,
-          },
+          }
         );
       }
 
       const cleanName = name.trim();
       const cleanEmail = email.trim().toLowerCase();
-      const cleanBrand = isString(brand) ? brand.trim() : "";
+
+      const cleanBrand =
+        typeof brand === "string" ? brand.trim() : "";
+
       const cleanProjectType = projectType.trim();
       const cleanMessage = message.trim();
 
-      if (cleanName.length < 2 || cleanName.length > MAX_NAME_LENGTH) {
+      if (
+        !cleanName ||
+        !cleanEmail ||
+        !cleanProjectType ||
+        !cleanMessage
+      ) {
         return Response.json(
           {
-            message: "Please enter a valid name.",
+            success: false,
+            error: "Please complete all required fields.",
           },
           {
             status: 400,
-          },
+          }
         );
       }
 
-      if (cleanEmail.length > MAX_EMAIL_LENGTH || !isValidEmail(cleanEmail)) {
+      if (cleanName.length > 100) {
         return Response.json(
           {
-            message: "Please enter a valid email address.",
+            success: false,
+            error: "Name is too long.",
           },
           {
             status: 400,
-          },
-        );
-      }
-
-      if (cleanBrand.length > MAX_BRAND_LENGTH) {
-        return Response.json(
-          {
-            message: "Company or brand name is too long.",
-          },
-          {
-            status: 400,
-          },
+          }
         );
       }
 
       if (
-        cleanMessage.length < 10 ||
-        cleanMessage.length > MAX_MESSAGE_LENGTH
+        cleanEmail.length > 150 ||
+        !emailRegex.test(cleanEmail)
       ) {
         return Response.json(
           {
-            message: "Your message must be between 10 and 2000 characters.",
+            success: false,
+            error: "Please enter a valid email address.",
           },
           {
             status: 400,
-          },
+          }
         );
       }
 
-      const allowedProjectTypes = [
-        "video-editing",
-        "graphic-design",
-        "ugc",
-        "social-media",
-        "other",
-      ];
-
-      if (!allowedProjectTypes.includes(cleanProjectType)) {
+      if (cleanBrand.length > 150) {
         return Response.json(
           {
-            message: "Please select a valid project type.",
+            success: false,
+            error: "Company or brand name is too long.",
           },
           {
             status: 400,
-          },
+          }
         );
       }
 
-      if (!process.env.CONTACT_EMAIL) {
-        console.error("CONTACT_EMAIL is missing.");
-
+      if (
+        !allowedProjectTypes.includes(cleanProjectType)
+      ) {
         return Response.json(
           {
-            message: "Contact service is temporarily unavailable.",
+            success: false,
+            error: "Please select a valid project type.",
           },
           {
-            status: 500,
-          },
+            status: 400,
+          }
         );
       }
 
-      const safeName = escapeHtml(cleanName);
-      const safeEmail = escapeHtml(cleanEmail);
-      const safeBrand = escapeHtml(cleanBrand || "Not provided");
-      const safeProjectType = escapeHtml(cleanProjectType);
-      const safeMessage = escapeHtml(cleanMessage).replaceAll("\n", "<br />");
+      if (cleanMessage.length > 3000) {
+        return Response.json(
+          {
+            success: false,
+            error: "Message is too long.",
+          },
+          {
+            status: 400,
+          }
+        );
+      }
 
-      const { error } = await resend.emails.send({
-        /*
-         * Temporary sender while developing.
-         * We'll replace this with Anastasia's verified domain.
-         */
-        from: "Anastasia Portfolio <onboarding@resend.dev>",
+      const projectTypeLabels: Record<string, string> = {
+        "video-editing": "Video Editing",
+        "graphic-design": "Graphic Design",
+        ugc: "UGC Creation",
+        "social-media": "Social Media Management",
+        other: "Other",
+      };
 
-        to: [process.env.CONTACT_EMAIL],
+      const projectLabel =
+        projectTypeLabels[cleanProjectType] ||
+        cleanProjectType;
 
-        replyTo: cleanEmail,
+      const { data, error } =
+        await resend.emails.send({
+          from: "Anastasia Portfolio <onboarding@resend.dev>",
+          to: [contactEmail],
+          replyTo: cleanEmail,
+          subject: `New portfolio inquiry from ${cleanName}`,
 
-        subject: `New portfolio inquiry from ${cleanName}`,
+          html: `
+            <!DOCTYPE html>
+            <html lang="en">
+              <head>
+                <meta charset="UTF-8" />
+                <meta
+                  name="viewport"
+                  content="width=device-width, initial-scale=1.0"
+                />
+                <title>New Portfolio Inquiry</title>
+              </head>
 
-        html: `
-          <div
-            style="
-              max-width: 640px;
-              margin: 0 auto;
-              padding: 40px;
-              font-family: Arial, Helvetica, sans-serif;
-              color: #181714;
-              background: #f3efe8;
-            "
-          >
-            <p
-              style="
-                margin: 0 0 40px;
-                font-size: 12px;
-                text-transform: uppercase;
-                letter-spacing: 2px;
-              "
-            >
-              Anastasia Paskaleva · Portfolio Inquiry
-            </p>
-
-            <h1
-              style="
-                margin: 0 0 40px;
-                font-size: 38px;
-                font-weight: 400;
-                line-height: 1.1;
-              "
-            >
-              New project inquiry
-            </h1>
-
-            <table
-              style="
-                width: 100%;
-                border-collapse: collapse;
-                margin-bottom: 40px;
-              "
-            >
-              <tr>
-                <td style="padding: 12px 0; border-bottom: 1px solid #d2cdc5;">
-                  <strong>Name</strong>
-                </td>
-
-                <td
+              <body
+                style="
+                  margin: 0;
+                  padding: 0;
+                  background-color: #f3efe8;
+                  font-family: Arial, Helvetica, sans-serif;
+                  color: #181714;
+                "
+              >
+                <div
                   style="
-                    padding: 12px 0;
-                    border-bottom: 1px solid #d2cdc5;
-                    text-align: right;
+                    width: 100%;
+                    padding: 40px 20px;
+                    box-sizing: border-box;
                   "
                 >
-                  ${safeName}
-                </td>
-              </tr>
+                  <div
+                    style="
+                      max-width: 620px;
+                      margin: 0 auto;
+                      background-color: #ffffff;
+                      padding: 40px;
+                      border-radius: 16px;
+                      box-sizing: border-box;
+                    "
+                  >
+                    <p
+                      style="
+                        margin: 0 0 12px;
+                        font-size: 12px;
+                        text-transform: uppercase;
+                        letter-spacing: 0.16em;
+                        opacity: 0.55;
+                      "
+                    >
+                      Anastasia Portfolio
+                    </p>
 
-              <tr>
-                <td style="padding: 12px 0; border-bottom: 1px solid #d2cdc5;">
-                  <strong>Email</strong>
-                </td>
+                    <h1
+                      style="
+                        margin: 0 0 32px;
+                        font-size: 32px;
+                        line-height: 1.1;
+                        font-weight: 500;
+                      "
+                    >
+                      New inquiry
+                    </h1>
 
-                <td
-                  style="
-                    padding: 12px 0;
-                    border-bottom: 1px solid #d2cdc5;
-                    text-align: right;
-                  "
-                >
-                  ${safeEmail}
-                </td>
-              </tr>
+                    <div
+                      style="
+                        border-top: 1px solid #dedbd5;
+                        padding-top: 24px;
+                      "
+                    >
+                      <p style="margin: 0 0 18px;">
+                        <strong>Name</strong><br />
+                        ${escapeHtml(cleanName)}
+                      </p>
 
-              <tr>
-                <td style="padding: 12px 0; border-bottom: 1px solid #d2cdc5;">
-                  <strong>Brand</strong>
-                </td>
+                      <p style="margin: 0 0 18px;">
+                        <strong>Email</strong><br />
+                        ${escapeHtml(cleanEmail)}
+                      </p>
 
-                <td
-                  style="
-                    padding: 12px 0;
-                    border-bottom: 1px solid #d2cdc5;
-                    text-align: right;
-                  "
-                >
-                  ${safeBrand}
-                </td>
-              </tr>
+                      <p style="margin: 0 0 18px;">
+                        <strong>
+                          Company / Brand
+                        </strong>
+                        <br />
 
-              <tr>
-                <td style="padding: 12px 0; border-bottom: 1px solid #d2cdc5;">
-                  <strong>Project</strong>
-                </td>
+                        ${
+                          cleanBrand
+                            ? escapeHtml(cleanBrand)
+                            : "Not provided"
+                        }
+                      </p>
 
-                <td
-                  style="
-                    padding: 12px 0;
-                    border-bottom: 1px solid #d2cdc5;
-                    text-align: right;
-                  "
-                >
-                  ${safeProjectType}
-                </td>
-              </tr>
-            </table>
+                      <p style="margin: 0 0 18px;">
+                        <strong>Project type</strong><br />
+                        ${escapeHtml(projectLabel)}
+                      </p>
 
-            <p
-              style="
-                margin: 0 0 12px;
-                font-size: 12px;
-                text-transform: uppercase;
-                letter-spacing: 2px;
-              "
-            >
-              Message
-            </p>
+                      <p style="margin: 0 0 8px;">
+                        <strong>Message</strong>
+                      </p>
 
-            <div
-              style="
-                font-size: 16px;
-                line-height: 1.7;
-              "
-            >
-              ${safeMessage}
-            </div>
-          </div>
-        `,
-      });
+                      <div
+                        style="
+                          font-size: 15px;
+                          line-height: 1.7;
+                          white-space: pre-wrap;
+                        "
+                      >${escapeHtml(cleanMessage)}</div>
+                    </div>
+                  </div>
+                </div>
+              </body>
+            </html>
+          `,
+        });
 
       if (error) {
-        console.error("Resend error:", error);
+        console.error(
+          "[Resend API Error]:",
+          error
+        );
 
         return Response.json(
           {
-            message: "Your message could not be sent. Please try again.",
+            success: false,
+            error:
+              "Unable to send your inquiry. Please try again.",
           },
           {
             status: 500,
-          },
+          }
         );
       }
 
-      return Response.json({
-        message: "Message sent successfully.",
-      });
-    } catch (error) {
-      console.error("Contact API error:", error);
+      console.log(
+        "Contact email sent:",
+        data?.id
+      );
 
       return Response.json(
         {
-          message: "Something went wrong. Please try again.",
+          success: true,
+          message: "Inquiry sent successfully.",
+        },
+        {
+          status: 200,
+        }
+      );
+    } catch (error) {
+      console.error(
+        "Contact API error:",
+        error
+      );
+
+      return Response.json(
+        {
+          success: false,
+          error: "An unexpected error occurred.",
         },
         {
           status: 500,
-        },
+        }
       );
     }
   },
