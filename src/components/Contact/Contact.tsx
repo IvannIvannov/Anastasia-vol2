@@ -460,15 +460,6 @@ const Contact = () => {
           </div>
         </form>
       </motion.div>
-
-      <div className="contact__footer">
-        <p>© 2026 Anastasia Paskaleva</p>
-
-        <a href="#top" className="contact__back-top">
-          Back to top
-          <span aria-hidden="true">↑</span>
-        </a>
-      </div>
     </section>
   );
 };

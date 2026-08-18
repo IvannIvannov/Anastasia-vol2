@@ -6,6 +6,7 @@ import Clients from "./components/Clients/Clients";
 import Reels from "./components/Reels/Reels";
 import YouTube from "./components/YouTube/YouTube";
 import Contact from "./components/Contact/Contact";
+import Footer from "./components/Footer/Footer";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <Reels />
       <YouTube />
       <Contact />
+      <Footer />
     </>
   );
 }
