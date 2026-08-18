@@ -64,7 +64,7 @@ export default function Hero() {
       <div className="hero__bottom">
         <span>Visual storytelling · Content · Direction</span>
 
-        <a href="#work">Selected work ↘</a>
+        <a href="#reels">Explore my work ↘</a>
       </div>
     </section>
   );

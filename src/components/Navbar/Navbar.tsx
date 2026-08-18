@@ -7,7 +7,7 @@ const Navbar = () => {
         </a>
 
         <div className="hidden items-center gap-8 text-xs uppercase tracking-[0.14em] md:flex">
-          <a href="#work" className="transition-opacity hover:opacity-50">
+          <a href="#reels" className="transition-opacity hover:opacity-50">
             Work
           </a>
           <a href="#about" className="transition-opacity hover:opacity-50">
