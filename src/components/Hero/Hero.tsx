@@ -1,81 +1,71 @@
-import { motion, useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
+import { motion } from "motion/react";
 import "./Hero.css";
 
-const Hero = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"],
-  });
-
-  const titleY = useTransform(scrollYProgress, [0, 1], [0, -50]);
-
+export default function Hero() {
   return (
-    <section ref={sectionRef} className="hero">
-      <div className="hero__container">
+    <section className="hero" id="top">
+      <div className="hero__layout">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          className="hero__content"
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="hero__description-wrapper"
+          transition={{
+            duration: 0.8,
+            ease: [0.22, 1, 0.36, 1],
+          }}
         >
+          <span className="hero__eyebrow">Creative portfolio · 2026</span>
+
+          <h1 className="hero__title">
+            Creating visuals
+            <br />
+            that feel
+            <span> intentional.</span>
+          </h1>
+
           <p className="hero__description">
-            Video Editor · Graphic Designer · UGC Creator · Social Media Manager
+            Video editor, graphic designer, UGC creator and social media manager
+            creating thoughtful visual content for brands and people.
           </p>
-        </motion.div>
 
-        <motion.div style={{ y: titleY }} className="hero__title-wrapper">
-          <div className="hero__title-line">
-            <motion.h1
-              initial={{ y: "110%" }}
-              animate={{ y: 0 }}
-              transition={{
-                duration: 1,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="hero__title"
-            >
-              Anastasia
-            </motion.h1>
-          </div>
-
-          <div className="hero__title-line">
-            <motion.h1
-              initial={{ y: "110%" }}
-              animate={{ y: 0 }}
-              transition={{
-                duration: 1,
-                delay: 0.12,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="hero__title"
-            >
-              Paskaleva
-            </motion.h1>
+          <div className="hero__roles">
+            <span>Video Editing</span>
+            <span>Graphic Design</span>
+            <span>UGC</span>
+            <span>Social Media</span>
           </div>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          className="hero__visual"
+          initial={{ opacity: 0, scale: 0.97 }}
+          animate={{ opacity: 1, scale: 1 }}
           transition={{
-            delay: 1,
-            duration: 0.8,
+            duration: 1,
+            delay: 0.15,
+            ease: [0.22, 1, 0.36, 1],
           }}
-          className="hero__bottom"
         >
-          <p className="hero__location">Plovdiv · Bulgaria</p>
+          <div className="hero__image-wrapper">
+            <img
+              src="/hero/anastasia-hero.jpg"
+              alt="Anastasia Paskaleva"
+              className="hero__image"
+            />
+          </div>
 
-          <a href="#work" className="hero__work-link">
-            Selected work
-            <span className="hero__arrow">↓</span>
-          </a>
+          <div className="hero__image-meta">
+            <span>Plovdiv, Bulgaria</span>
+            <span>Scroll to explore ↓</span>
+          </div>
         </motion.div>
+      </div>
+
+      <div className="hero__bottom">
+        <span>Visual storytelling · Content · Direction</span>
+
+        <a href="#work">Selected work ↘</a>
       </div>
     </section>
   );
-};
-
-export default Hero;
+}
