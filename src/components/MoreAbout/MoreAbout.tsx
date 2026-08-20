@@ -1,7 +1,11 @@
 import { motion } from "motion/react";
+
 import photoOne from "../../assets/anastasia.png";
+
 import photoTwo from "../../assets/anastasia.png";
+
 import photoThree from "../../assets/anastasia.png";
+
 import "./MoreAbout.css";
 
 const MoreAbout = () => {
@@ -24,9 +28,9 @@ const MoreAbout = () => {
             }}
             className="more-about__title"
           >
-            Creating with purpose,
+            I care about the idea
             <br />
-            not just for attention.
+            behind the visual.
           </motion.h2>
 
           <motion.div
@@ -69,15 +73,14 @@ const MoreAbout = () => {
             className="more-about__description"
           >
             <p>
-              My work lives at the intersection of creativity, visual
-              storytelling and digital communication.
+              For me, good content is not only about how it looks. It should
+              have a clear idea, a purpose and a feeling behind it.
             </p>
 
             <p>
-              From shaping the visual direction of a brand to editing the final
-              frame of a video, I enjoy being involved in the entire creative
-              process and turning ideas into content that feels considered,
-              relevant and memorable.
+              I enjoy being part of the whole creative process — developing the
+              concept, shaping the visual direction, editing the details and
+              bringing everything together into content that feels complete.
             </p>
           </motion.div>
 
@@ -94,17 +97,17 @@ const MoreAbout = () => {
           >
             <div className="more-about__info-item">
               <span>Based in</span>
-              <p>Plovdiv, Bulgaria</p>
+              <p>Plovdiv/Sofia, Bulgaria</p>
             </div>
 
             <div className="more-about__info-item">
               <span>Working across</span>
-              <p>Content · Design · Video · Social</p>
+              <p>Video · Design · UGC · Social Media</p>
             </div>
 
             <div className="more-about__info-item">
-              <span>Available for</span>
-              <p>Freelance projects & collaborations</p>
+              <span>Open to</span>
+              <p>Freelance projects & brand collaborations</p>
             </div>
           </motion.div>
         </div>
