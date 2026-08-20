@@ -1,22 +1,23 @@
 import { motion } from "motion/react";
+
 import "./YouTube.css";
 
 const channels = [
   {
     name: "Channel One",
-    role: "Video Editing · Channel Management",
+    role: "My YouTube Channel · Video Editing · Content Creation",
     description:
-      "Lifestyle, beauty and personal content focused on everyday moments, inspiration and visual storytelling.",
+      "My own YouTube channel, where I share lifestyle, beauty and personal content while taking care of everything from the idea to the final edit.",
     image: "/youtube/anaria.png",
-    link: "#",
+    link: "https://www.youtube.com/@anastasiapaskaleva",
   },
   {
     name: "Channel Two",
     role: "Video Editing · Content Management",
     description:
-      "Long-form lifestyle content combining personal stories, fashion, travel and behind-the-scenes moments.",
+      "Lifestyle, fashion and travel videos edited to feel natural, engaging and true to the creator behind the channel.",
     image: "/youtube/yuliaR.png",
-    link: "#",
+    link: "https://www.youtube.com/@YuliaSalakina",
   },
 ];
 
@@ -55,8 +56,8 @@ const YouTube = () => {
           }}
           className="youtube__description"
         >
-          Selected YouTube channels featuring long-form content, editing and
-          ongoing channel management.
+          A selection of YouTube channels I work on, from video editing to
+          ongoing content and channel management.
         </motion.p>
       </div>
 
@@ -111,7 +112,7 @@ const YouTube = () => {
                   rel="noreferrer"
                   className="youtube-card__button"
                 >
-                  View channel
+                  Explore channel
                   <span>↗</span>
                 </a>
               </div>
