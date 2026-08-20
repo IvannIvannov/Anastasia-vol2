@@ -1,7 +1,9 @@
 import { useState } from "react";
+
 import { AnimatePresence, motion } from "motion/react";
 
 import aboutImage from "../../assets/anastasia.png";
+
 import MoreAbout from "../MoreAbout/MoreAbout";
 
 import "./About.css";
@@ -47,9 +49,9 @@ const About = () => {
               }}
               className="about__title"
             >
-              Creative work,
+              Ideas shaped
               <br />
-              thoughtfully made.
+              into something visual.
             </motion.h2>
 
             <motion.div
@@ -64,14 +66,14 @@ const About = () => {
               className="about__text"
             >
               <p>
-                I'm Anastasia, a creative professional working across video
-                editing, graphic design, UGC and social media.
+                I&apos;m Anastasia — a creative working across video editing,
+                graphic design, UGC creation and social media.
               </p>
 
               <p>
-                I create visual content that combines storytelling, strategy and
-                attention to detail to help brands communicate in a way that
-                feels authentic and memorable.
+                I love turning ideas into content that feels polished, natural
+                and true to the brand behind it. For me, the details matter —
+                from the first concept to the final frame.
               </p>
             </motion.div>
 
