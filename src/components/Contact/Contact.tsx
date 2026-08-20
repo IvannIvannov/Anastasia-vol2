@@ -34,6 +34,7 @@ interface TurnstileInstance {
       sitekey: string;
       theme?: "light" | "dark" | "auto";
       size?: "normal" | "compact" | "flexible";
+      appearance?: "always" | "execute" | "interaction-only";
       callback?: (token: string) => void;
       "error-callback"?: () => void;
       "expired-callback"?: () => void;
@@ -137,6 +138,7 @@ const Contact = () => {
             sitekey: siteKey,
             theme: "dark",
             size: "flexible",
+            appearance: "interaction-only",
 
             callback: (token) => {
               setTurnstileToken(token);
