@@ -60,7 +60,42 @@ const initialFormData: ContactFormData = {
   website: "",
 };
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const emailRegex =
+  /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+$/;
+
+const isValidEmail = (email: string) => {
+  const cleanEmail = email.trim();
+
+  if (!emailRegex.test(cleanEmail)) {
+    return false;
+  }
+
+  const atCount = (cleanEmail.match(/@/g) ?? []).length;
+
+  if (atCount !== 1) {
+    return false;
+  }
+
+  if (
+    cleanEmail.includes("..") ||
+    cleanEmail.startsWith(".") ||
+    cleanEmail.endsWith(".")
+  ) {
+    return false;
+  }
+
+  const [localPart, domain] = cleanEmail.split("@");
+
+  if (!localPart || !domain) {
+    return false;
+  }
+
+  if (domain.startsWith("-") || domain.endsWith("-")) {
+    return false;
+  }
+
+  return true;
+};
 
 const Contact = () => {
   const [formData, setFormData] = useState<ContactFormData>({
@@ -237,7 +272,7 @@ const Contact = () => {
 
     if (!formData.email.trim()) {
       newErrors.email = "Please enter your email address.";
-    } else if (!emailRegex.test(formData.email.trim())) {
+    } else if (!isValidEmail(formData.email)) {
       newErrors.email = "Please enter a valid email address.";
     }
 
@@ -285,13 +320,13 @@ const Contact = () => {
         body: JSON.stringify({
           name: `${formData.firstName} ${formData.lastName}`.trim(),
 
-          email: formData.email,
+          email: formData.email.trim(),
 
-          brand: formData.phone,
+          brand: formData.phone.trim(),
 
           projectType: "other",
 
-          message: `Subject: ${formData.subject}\n\n${formData.message}`,
+          message: `Subject: ${formData.subject.trim()}\n\n${formData.message.trim()}`,
 
           website: formData.website,
 
@@ -559,8 +594,6 @@ const Contact = () => {
             )}
           </div>
 
-          {/* Honeypot */}
-
           <input
             className="contact-form__honeypot"
             type="text"
@@ -571,8 +604,6 @@ const Contact = () => {
             autoComplete="off"
             aria-hidden="true"
           />
-
-          {/* Cloudflare Turnstile */}
 
           <div className="contact-form__turnstile-wrapper">
             <div
