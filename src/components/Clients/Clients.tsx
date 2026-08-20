@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+
 import "./Clients.css";
 
 const clients = [
@@ -31,14 +32,14 @@ const Clients = () => {
           }}
           className="clients__title"
         >
-          Brands I've
+          Brands I&apos;ve
           <br />
           created for.
         </motion.h2>
 
         <p className="clients__description">
-          Selected collaborations across fashion, beauty, hospitality, lifestyle
-          and digital media.
+          A selection of brands I&apos;ve worked with across fashion, beauty,
+          hospitality, lifestyle and digital media.
         </p>
       </div>
 
@@ -52,7 +53,6 @@ const Clients = () => {
           ))}
         </div>
       </div>
-
     </section>
   );
 };
