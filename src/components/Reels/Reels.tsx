@@ -184,14 +184,6 @@ const Reels = () => {
 
   const videoRefs = useRef<Record<number, HTMLVideoElement | null>>({});
 
-  /*
-    Ако няма избрана категория:
-    показваме само curated mix.
-
-    Ако има избрана категория:
-    показваме всички reels от нея.
-  */
-
   const visibleReels = useMemo(() => {
     if (!activeCategory) {
       return reels.filter((reel) => reel.featured);
@@ -213,11 +205,6 @@ const Reels = () => {
 
   const handleCategoryChange = (category: ReelCategory) => {
     stopAllVideos();
-
-    /*
-      Ако натиснем отново активната категория,
-      връщаме началната смесица.
-    */
 
     if (activeCategory === category) {
       setActiveCategory(null);
@@ -293,7 +280,6 @@ const Reels = () => {
       <div className="reels__header">
         <p className="reels__label">Reels</p>
 
-        <span className="reels__section-number">04</span>
       </div>
 
       <div className="reels__intro">

@@ -16,7 +16,6 @@ const About = () => {
       <section id="about" className="about">
         <div className="about__header">
           <p className="about__label">About</p>
-          <span className="about__number">01</span>
         </div>
 
         <div className="about__layout">

@@ -26,7 +26,6 @@ const YouTube = () => {
     <section id="youtube" className="youtube">
       <div className="youtube__header">
         <p className="youtube__label">YouTube</p>
-        <span className="youtube__number">05</span>
       </div>
 
       <div className="youtube__intro">

@@ -18,7 +18,6 @@ const Clients = () => {
     <section className="clients">
       <div className="clients__header">
         <p className="clients__label">Selected clients</p>
-        <span className="clients__number">03</span>
       </div>
 
       <div className="clients__intro">

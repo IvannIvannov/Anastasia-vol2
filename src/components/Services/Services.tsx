@@ -34,7 +34,6 @@ const Services = () => {
     <section id="services" className="services">
       <div className="services__header">
         <p className="services__label">Services</p>
-        <span className="services__section-number">02</span>
       </div>
 
       <div className="services__intro">

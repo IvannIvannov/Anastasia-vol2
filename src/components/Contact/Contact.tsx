@@ -372,8 +372,6 @@ const Contact = () => {
     <section className="contact" id="contact">
       <div className="contact__header">
         <p className="contact__label">Contact</p>
-
-        <span className="contact__number">05</span>
       </div>
 
       <motion.div

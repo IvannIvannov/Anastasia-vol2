@@ -13,7 +13,6 @@ const MoreAbout = () => {
     <section id="more-about" className="more-about">
       <div className="more-about__header">
         <p className="more-about__label">More about me</p>
-        <span className="more-about__number">01.1</span>
       </div>
 
       <div className="more-about__layout">
