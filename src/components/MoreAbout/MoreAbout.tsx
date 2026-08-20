@@ -1,14 +1,16 @@
 import { motion } from "motion/react";
 
 import photoOne from "../../assets/anastasia.png";
-
 import photoTwo from "../../assets/anastasia.png";
-
 import photoThree from "../../assets/anastasia.png";
 
 import "./MoreAbout.css";
 
-const MoreAbout = () => {
+interface MoreAboutProps {
+  onClose: () => void;
+}
+
+const MoreAbout = ({ onClose }: MoreAboutProps) => {
   return (
     <section id="more-about" className="more-about">
       <div className="more-about__header">
@@ -96,7 +98,7 @@ const MoreAbout = () => {
           >
             <div className="more-about__info-item">
               <span>Based in</span>
-              <p>Plovdiv/Sofia, Bulgaria</p>
+              <p>Plovdiv / Sofia, Bulgaria</p>
             </div>
 
             <div className="more-about__info-item">
@@ -111,6 +113,27 @@ const MoreAbout = () => {
           </motion.div>
         </div>
       </div>
+
+      <motion.div
+        className="more-about__close"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{
+          duration: 0.7,
+          delay: 0.15,
+          ease: [0.22, 1, 0.36, 1],
+        }}
+      >
+        <button
+          type="button"
+          className="more-about__close-button"
+          onClick={onClose}
+        >
+          <span>Back to about</span>
+          <span className="more-about__close-arrow">↑</span>
+        </button>
+      </motion.div>
     </section>
   );
 };

@@ -85,7 +85,9 @@ const About = () => {
               <span>{showMore ? "Show less" : "More about me"}</span>
 
               <motion.span
-                animate={{ rotate: showMore ? 180 : 0 }}
+                animate={{
+                  rotate: showMore ? 180 : 0,
+                }}
                 transition={{
                   duration: 0.35,
                   ease: [0.22, 1, 0.36, 1],
@@ -105,28 +107,24 @@ const About = () => {
             key="more-about"
             initial={{
               height: 0,
-              opacity: 0,
             }}
             animate={{
               height: "auto",
-              opacity: 1,
             }}
             exit={{
               height: 0,
-              opacity: 0,
             }}
             transition={{
               height: {
                 duration: 0.75,
                 ease: [0.22, 1, 0.36, 1],
               },
-              opacity: {
-                duration: 0.45,
-              },
             }}
-            style={{ overflow: "hidden" }}
+            style={{
+              overflow: "hidden",
+            }}
           >
-            <MoreAbout />
+            <MoreAbout onClose={() => setShowMore(false)} />
           </motion.div>
         )}
       </AnimatePresence>
