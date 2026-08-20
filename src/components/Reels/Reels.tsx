@@ -362,7 +362,7 @@ const Reels = () => {
           {activeCategory
             ? categories.find((category) => category.value === activeCategory)
                 ?.label
-            : "Selected work"}
+            : "Featured work"}
         </span>
 
         {activeCategory && (
@@ -373,7 +373,7 @@ const Reels = () => {
               setActiveCategory(null);
             }}
           >
-            Show selected mix
+            Back to featured
           </button>
         )}
       </div>
