@@ -18,6 +18,15 @@ interface ContactFormData {
   website: string;
 }
 
+interface FormErrors {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  subject?: string;
+  message?: string;
+  verification?: string;
+}
+
 interface TurnstileInstance {
   render: (
     container: HTMLElement,
@@ -51,12 +60,16 @@ const initialFormData: ContactFormData = {
   website: "",
 };
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const Contact = () => {
   const [formData, setFormData] = useState<ContactFormData>({
     ...initialFormData,
   });
 
   const [status, setStatus] = useState<FormStatus>("idle");
+
+  const [errors, setErrors] = useState<FormErrors>({});
 
   const [turnstileToken, setTurnstileToken] = useState("");
 
@@ -92,6 +105,11 @@ const Contact = () => {
 
             callback: (token) => {
               setTurnstileToken(token);
+
+              setErrors((prev) => ({
+                ...prev,
+                verification: undefined,
+              }));
             },
 
             "expired-callback": () => {
@@ -196,9 +214,48 @@ const Contact = () => {
       [name]: value,
     }));
 
+    setErrors((prev) => ({
+      ...prev,
+      [name]: undefined,
+    }));
+
     if (status === "success" || status === "error") {
       setStatus("idle");
     }
+  };
+
+  const validateForm = () => {
+    const newErrors: FormErrors = {};
+
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = "Please enter your first name.";
+    }
+
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = "Please enter your last name.";
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Please enter your email address.";
+    } else if (!emailRegex.test(formData.email.trim())) {
+      newErrors.email = "Please enter a valid email address.";
+    }
+
+    if (!formData.subject.trim()) {
+      newErrors.subject = "Please tell me what your inquiry is about.";
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = "Please enter your message.";
+    }
+
+    if (!turnstileToken) {
+      newErrors.verification = "Please complete the verification.";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
@@ -208,8 +265,10 @@ const Contact = () => {
       return;
     }
 
-    if (!turnstileToken) {
-      setStatus("error");
+    const isValid = validateForm();
+
+    if (!isValid) {
+      setStatus("idle");
       return;
     }
 
@@ -259,6 +318,7 @@ const Contact = () => {
         ...initialFormData,
       });
 
+      setErrors({});
       setStatus("success");
 
       resetTurnstile();
@@ -307,9 +367,13 @@ const Contact = () => {
           about it.
         </p>
 
-        <form className="contact-form" onSubmit={handleSubmit}>
+        <form className="contact-form" onSubmit={handleSubmit} noValidate>
           <div className="contact-form__row">
-            <div className="contact-form__field">
+            <div
+              className={`contact-form__field ${
+                errors.firstName ? "contact-form__field--error" : ""
+              }`}
+            >
               <label htmlFor="firstName">First name *</label>
 
               <input
@@ -318,13 +382,33 @@ const Contact = () => {
                 name="firstName"
                 value={formData.firstName ?? ""}
                 onChange={handleChange}
-                required
                 maxLength={60}
                 autoComplete="given-name"
+                aria-invalid={Boolean(errors.firstName)}
               />
+
+              {errors.firstName && (
+                <motion.p
+                  className="contact-form__field-error"
+                  initial={{
+                    opacity: 0,
+                    y: -3,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                >
+                  {errors.firstName}
+                </motion.p>
+              )}
             </div>
 
-            <div className="contact-form__field">
+            <div
+              className={`contact-form__field ${
+                errors.lastName ? "contact-form__field--error" : ""
+              }`}
+            >
               <label htmlFor="lastName">Last name *</label>
 
               <input
@@ -333,15 +417,35 @@ const Contact = () => {
                 name="lastName"
                 value={formData.lastName ?? ""}
                 onChange={handleChange}
-                required
                 maxLength={60}
                 autoComplete="family-name"
+                aria-invalid={Boolean(errors.lastName)}
               />
+
+              {errors.lastName && (
+                <motion.p
+                  className="contact-form__field-error"
+                  initial={{
+                    opacity: 0,
+                    y: -3,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                >
+                  {errors.lastName}
+                </motion.p>
+              )}
             </div>
           </div>
 
           <div className="contact-form__row">
-            <div className="contact-form__field">
+            <div
+              className={`contact-form__field ${
+                errors.email ? "contact-form__field--error" : ""
+              }`}
+            >
               <label htmlFor="email">Email address *</label>
 
               <input
@@ -350,10 +454,26 @@ const Contact = () => {
                 name="email"
                 value={formData.email ?? ""}
                 onChange={handleChange}
-                required
                 maxLength={150}
                 autoComplete="email"
+                aria-invalid={Boolean(errors.email)}
               />
+
+              {errors.email && (
+                <motion.p
+                  className="contact-form__field-error"
+                  initial={{
+                    opacity: 0,
+                    y: -3,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                >
+                  {errors.email}
+                </motion.p>
+              )}
             </div>
 
             <div className="contact-form__field">
@@ -371,7 +491,11 @@ const Contact = () => {
             </div>
           </div>
 
-          <div className="contact-form__field">
+          <div
+            className={`contact-form__field ${
+              errors.subject ? "contact-form__field--error" : ""
+            }`}
+          >
             <label htmlFor="subject">What is your inquiry about? *</label>
 
             <input
@@ -380,12 +504,32 @@ const Contact = () => {
               name="subject"
               value={formData.subject ?? ""}
               onChange={handleChange}
-              required
               maxLength={150}
+              aria-invalid={Boolean(errors.subject)}
             />
+
+            {errors.subject && (
+              <motion.p
+                className="contact-form__field-error"
+                initial={{
+                  opacity: 0,
+                  y: -3,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+              >
+                {errors.subject}
+              </motion.p>
+            )}
           </div>
 
-          <div className="contact-form__field">
+          <div
+            className={`contact-form__field ${
+              errors.message ? "contact-form__field--error" : ""
+            }`}
+          >
             <label htmlFor="message">Your message *</label>
 
             <textarea
@@ -393,13 +537,30 @@ const Contact = () => {
               name="message"
               value={formData.message ?? ""}
               onChange={handleChange}
-              required
               maxLength={3000}
               rows={7}
+              aria-invalid={Boolean(errors.message)}
             />
+
+            {errors.message && (
+              <motion.p
+                className="contact-form__field-error"
+                initial={{
+                  opacity: 0,
+                  y: -3,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+              >
+                {errors.message}
+              </motion.p>
+            )}
           </div>
 
           {/* Honeypot */}
+
           <input
             className="contact-form__honeypot"
             type="text"
@@ -412,10 +573,29 @@ const Contact = () => {
           />
 
           {/* Cloudflare Turnstile */}
-          <div
-            className="contact-form__turnstile"
-            ref={turnstileContainerRef}
-          />
+
+          <div className="contact-form__turnstile-wrapper">
+            <div
+              className="contact-form__turnstile"
+              ref={turnstileContainerRef}
+            />
+
+            {errors.verification && (
+              <motion.p
+                className="contact-form__field-error contact-form__verification-error"
+                initial={{
+                  opacity: 0,
+                  y: -3,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+              >
+                {errors.verification}
+              </motion.p>
+            )}
+          </div>
 
           <button
             className="contact-form__submit"
@@ -454,7 +634,7 @@ const Contact = () => {
                   y: 0,
                 }}
               >
-                Please complete the verification and try again.
+                Something went wrong. Please try again.
               </motion.p>
             )}
           </div>

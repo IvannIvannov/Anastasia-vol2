@@ -1,7 +1,8 @@
 .contact {
     padding: 8rem 3.5rem 2rem;
 
-    background-color: #181714;
+    background-color: #60493e;
+
     color: #f3efe8;
 }
 
@@ -154,9 +155,44 @@
 
 .contact-form__field input:focus,
 .contact-form__field textarea:focus {
-    border-color: rgba(243, 239, 232, 0.65);
+    border-color: rgba(243, 239, 232, 0.55);
 
-    background-color: rgba(243, 239, 232, 0.018);
+    background-color: rgba(243, 239, 232, 0.035);
+
+    box-shadow:
+        0 0 0 1px rgba(243, 239, 232, 0.025);
+
+    transition:
+        border-color 0.3s ease,
+        background-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+/* AUTOFILL */
+
+.contact-form__field input:-webkit-autofill,
+.contact-form__field input:-webkit-autofill:hover,
+.contact-form__field input:-webkit-autofill:focus,
+.contact-form__field input:-webkit-autofill:active {
+    -webkit-text-fill-color: #f3efe8;
+
+    -webkit-box-shadow:
+        0 0 0 1000px #60493e inset;
+
+    box-shadow:
+        0 0 0 1000px #60493e inset;
+
+    caret-color: #f3efe8;
+
+    border-color: rgba(243, 239, 232, 0.32);
+
+    transition:
+        background-color 9999s ease-out 0s;
+}
+
+.contact-form__field input:autofill {
+    background-color: #60493e;
+    color: #f3efe8;
 }
 
 /* TURNSTILE */
@@ -197,10 +233,9 @@
     border: 1px solid #f3efe8;
 
     background-color: #f3efe8;
-    color: #181714;
+    color: #60493e;
 
     font-family: inherit;
-
     font-size: 0.72rem;
     font-weight: 500;
 
@@ -296,6 +331,40 @@
 
 .contact__back-top:hover span {
     transform: translateY(-3px);
+}
+
+/* CUSTOM VALIDATION */
+
+.contact-form__field-error {
+    margin: 0.15rem 0 0;
+
+    font-size: 0.68rem;
+    line-height: 1.4;
+
+    letter-spacing: 0.02em;
+
+    color: #e7c6bd;
+}
+
+.contact-form__field--error input,
+.contact-form__field--error textarea {
+    border-color: rgba(231, 198, 189, 0.72);
+}
+
+.contact-form__field--error label {
+    opacity: 0.8;
+}
+
+.contact-form__turnstile-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 0.6rem;
+}
+
+.contact-form__verification-error {
+    text-align: center;
 }
 
 /* TABLET */
