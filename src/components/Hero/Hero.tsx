@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+
 import "./Hero.css";
 
 export default function Hero() {
@@ -17,21 +18,21 @@ export default function Hero() {
           <span className="hero__eyebrow">Creative portfolio · 2026</span>
 
           <h1 className="hero__title">
-            Creating visuals
+            Creative work,
             <br />
-            that feel
-            <span> intentional.</span>
+            made with
+            <span> intention.</span>
           </h1>
 
           <p className="hero__description">
-            Video editor, graphic designer, UGC creator and social media manager
-            creating thoughtful visual content for brands and people.
+            I turn ideas into polished, engaging content — from video editing
+            and graphic design to UGC and social media.
           </p>
 
           <div className="hero__roles">
             <span>Video Editing</span>
             <span>Graphic Design</span>
-            <span>UGC</span>
+            <span>UGC Creation</span>
             <span>Social Media</span>
           </div>
         </motion.div>
@@ -55,14 +56,14 @@ export default function Hero() {
           </div>
 
           <div className="hero__image-meta">
-            <span>Plovdiv, Bulgaria</span>
+            <span>Plovdiv/Sofia, Bulgaria</span>
             <span>Scroll to explore ↓</span>
           </div>
         </motion.div>
       </div>
 
       <div className="hero__bottom">
-        <span>Visual storytelling · Content · Direction</span>
+        <span>Visual storytelling · Content · Creative direction</span>
 
         <a href="#reels">Explore my work ↘</a>
       </div>
