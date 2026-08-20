@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+
 import "./Services.css";
 
 const services = [
@@ -6,25 +7,25 @@ const services = [
     number: "01",
     title: "Video Editing",
     description:
-      "Dynamic and polished video content for social media, campaigns and digital storytelling.",
+      "Engaging, polished videos shaped around the story, the platform and the way your audience actually watches.",
   },
   {
     number: "02",
     title: "Graphic Design",
     description:
-      "Visual concepts, social media graphics and branded assets with a strong and consistent identity.",
+      "Clean, cohesive visuals for social media, campaigns and branded content that feel recognisable and consistent.",
   },
   {
     number: "03",
     title: "UGC Creation",
     description:
-      "Natural and engaging content designed to connect brands with their audience in an authentic way.",
+      "Natural, relatable content that presents products and services in a way that feels genuine, not overly produced.",
   },
   {
     number: "04",
     title: "Social Media Management",
     description:
-      "Creative direction, content planning and social media management shaped around each brand.",
+      "Content planning, creative direction and day-to-day social media support built around the voice and goals of each brand.",
   },
 ];
 
@@ -51,8 +52,8 @@ const Services = () => {
         </motion.h2>
 
         <p className="services__subtitle">
-          Creative services built around strong visuals, clear ideas and
-          meaningful digital communication.
+          From the first idea to the final detail, I create content that looks
+          good, feels right and works for the brand behind it.
         </p>
       </div>
 
@@ -72,9 +73,7 @@ const Services = () => {
           >
             <div className="service__main">
               <span className="service__number">{service.number}</span>
-
               <h3 className="service__title">{service.title}</h3>
-
               <span className="service__arrow">↗</span>
             </div>
 
