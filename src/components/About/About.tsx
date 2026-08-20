@@ -11,6 +11,10 @@ import "./About.css";
 const About = () => {
   const [showMore, setShowMore] = useState(false);
 
+  const handleCloseMoreAbout = () => {
+    setShowMore(false);
+  };
+
   return (
     <>
       <section id="about" className="about">
@@ -101,7 +105,15 @@ const About = () => {
         </div>
       </section>
 
-      <AnimatePresence initial={false}>
+      <AnimatePresence
+        initial={false}
+        onExitComplete={() => {
+          document.getElementById("services")?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }}
+      >
         {showMore && (
           <motion.div
             key="more-about"
@@ -124,7 +136,7 @@ const About = () => {
               overflow: "hidden",
             }}
           >
-            <MoreAbout onClose={() => setShowMore(false)} />
+            <MoreAbout onClose={handleCloseMoreAbout} />
           </motion.div>
         )}
       </AnimatePresence>
