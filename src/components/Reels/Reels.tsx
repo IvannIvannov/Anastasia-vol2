@@ -57,15 +57,6 @@ const categories: {
   },
 ];
 
-/*
-  Засега използваме тестовите Cloudinary видеа.
-
-  featured: true
-  означава, че видеото ще участва в началната
-  смесица, която посетителят вижда преди да
-  избере конкретна категория.
-*/
-
 const reels: Reel[] = [
   {
     id: 1,
@@ -278,7 +269,7 @@ const Reels = () => {
   return (
     <section className="reels" id="reels">
       <div className="reels__header">
-        <p className="reels__label">Reels</p>
+        <p className="reels__label">Work</p>
 
       </div>
 
