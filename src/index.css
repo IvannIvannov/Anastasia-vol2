@@ -9,3 +9,17 @@ body {
   min-width: 320px;
   min-height: 100vh;
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+section[id] {
+  scroll-margin-top: 90px;
+}
+
+@media (max-width: 768px) {
+  section[id] {
+    scroll-margin-top: 78px;
+  }
+}
