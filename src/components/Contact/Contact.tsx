@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from "react";
 
 import type { ChangeEvent, SubmitEvent } from "react";
 
-import { motion } from "motion/react";
-
 import "./Contact.css";
 
 type FormStatus = "idle" | "sending" | "success" | "error";
@@ -42,6 +40,7 @@ interface TurnstileInstance {
   ) => string;
 
   reset: (widgetId?: string) => void;
+
   remove: (widgetId: string) => void;
 }
 
@@ -112,6 +111,33 @@ const Contact = () => {
   const turnstileContainerRef = useRef<HTMLDivElement | null>(null);
 
   const turnstileWidgetIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    const elements = document.querySelectorAll(".contact .fade-up");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+          } else {
+            entry.target.classList.remove("show");
+          }
+        });
+      },
+      {
+        threshold: 0.12,
+      },
+    );
+
+    elements.forEach((element) => {
+      observer.observe(element);
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
@@ -227,6 +253,7 @@ const Contact = () => {
 
     if (!widgetId || !window.turnstile) {
       setTurnstileToken("");
+
       return;
     }
 
@@ -306,6 +333,7 @@ const Contact = () => {
 
     if (!isValid) {
       setStatus("idle");
+
       return;
     }
 
@@ -356,6 +384,7 @@ const Contact = () => {
       });
 
       setErrors({});
+
       setStatus("success");
 
       resetTurnstile();
@@ -370,39 +399,27 @@ const Contact = () => {
 
   return (
     <section className="contact" id="contact">
-      <div className="contact__header">
+      <div className="contact__header fade-up">
         <p className="contact__label">Contact</p>
       </div>
 
-      <motion.div
-        className="contact__content"
-        initial={{
-          opacity: 0,
-          y: 35,
-        }}
-        whileInView={{
-          opacity: 1,
-          y: 0,
-        }}
-        viewport={{
-          once: true,
-          amount: 0.15,
-        }}
-        transition={{
-          duration: 0.8,
-          ease: [0.22, 1, 0.36, 1],
-        }}
-      >
-        <span className="contact__eyebrow">Start a conversation</span>
+      <div className="contact__content">
+        <div className="contact__intro fade-up">
+          <span className="contact__eyebrow">Start a conversation</span>
 
-        <h2 className="contact__title">Get in touch</h2>
+          <h2 className="contact__title">Get in touch</h2>
 
-        <p className="contact__subtitle">
-          Have a project, collaboration or idea in mind? I&apos;d love to hear
-          about it.
-        </p>
+          <p className="contact__subtitle">
+            Have a project, collaboration or idea in mind? I&apos;d love to hear
+            about it.
+          </p>
+        </div>
 
-        <form className="contact-form" onSubmit={handleSubmit} noValidate>
+        <form
+          className="contact-form fade-up"
+          onSubmit={handleSubmit}
+          noValidate
+        >
           <div className="contact-form__row">
             <div
               className={`contact-form__field ${
@@ -420,22 +437,15 @@ const Contact = () => {
                 maxLength={60}
                 autoComplete="given-name"
                 aria-invalid={Boolean(errors.firstName)}
+                aria-describedby={
+                  errors.firstName ? "firstName-error" : undefined
+                }
               />
 
               {errors.firstName && (
-                <motion.p
-                  className="contact-form__field-error"
-                  initial={{
-                    opacity: 0,
-                    y: -3,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                >
+                <p id="firstName-error" className="contact-form__field-error">
                   {errors.firstName}
-                </motion.p>
+                </p>
               )}
             </div>
 
@@ -455,22 +465,15 @@ const Contact = () => {
                 maxLength={60}
                 autoComplete="family-name"
                 aria-invalid={Boolean(errors.lastName)}
+                aria-describedby={
+                  errors.lastName ? "lastName-error" : undefined
+                }
               />
 
               {errors.lastName && (
-                <motion.p
-                  className="contact-form__field-error"
-                  initial={{
-                    opacity: 0,
-                    y: -3,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                >
+                <p id="lastName-error" className="contact-form__field-error">
                   {errors.lastName}
-                </motion.p>
+                </p>
               )}
             </div>
           </div>
@@ -492,22 +495,13 @@ const Contact = () => {
                 maxLength={150}
                 autoComplete="email"
                 aria-invalid={Boolean(errors.email)}
+                aria-describedby={errors.email ? "email-error" : undefined}
               />
 
               {errors.email && (
-                <motion.p
-                  className="contact-form__field-error"
-                  initial={{
-                    opacity: 0,
-                    y: -3,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                >
+                <p id="email-error" className="contact-form__field-error">
                   {errors.email}
-                </motion.p>
+                </p>
               )}
             </div>
 
@@ -541,22 +535,13 @@ const Contact = () => {
               onChange={handleChange}
               maxLength={150}
               aria-invalid={Boolean(errors.subject)}
+              aria-describedby={errors.subject ? "subject-error" : undefined}
             />
 
             {errors.subject && (
-              <motion.p
-                className="contact-form__field-error"
-                initial={{
-                  opacity: 0,
-                  y: -3,
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                }}
-              >
+              <p id="subject-error" className="contact-form__field-error">
                 {errors.subject}
-              </motion.p>
+              </p>
             )}
           </div>
 
@@ -575,22 +560,13 @@ const Contact = () => {
               maxLength={3000}
               rows={7}
               aria-invalid={Boolean(errors.message)}
+              aria-describedby={errors.message ? "message-error" : undefined}
             />
 
             {errors.message && (
-              <motion.p
-                className="contact-form__field-error"
-                initial={{
-                  opacity: 0,
-                  y: -3,
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                }}
-              >
+              <p id="message-error" className="contact-form__field-error">
                 {errors.message}
-              </motion.p>
+              </p>
             )}
           </div>
 
@@ -612,19 +588,9 @@ const Contact = () => {
             />
 
             {errors.verification && (
-              <motion.p
-                className="contact-form__field-error contact-form__verification-error"
-                initial={{
-                  opacity: 0,
-                  y: -3,
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                }}
-              >
+              <p className="contact-form__field-error contact-form__verification-error">
                 {errors.verification}
-              </motion.p>
+              </p>
             )}
           </div>
 
@@ -636,41 +602,21 @@ const Contact = () => {
             {status === "sending" ? "Sending..." : "Send message"}
           </button>
 
-          <div className="contact-form__status">
+          <div className="contact-form__status" aria-live="polite">
             {status === "success" && (
-              <motion.p
-                className="contact-form__success"
-                initial={{
-                  opacity: 0,
-                  y: 5,
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                }}
-              >
+              <p className="contact-form__success">
                 Thank you! Your message has been sent successfully.
-              </motion.p>
+              </p>
             )}
 
             {status === "error" && (
-              <motion.p
-                className="contact-form__error"
-                initial={{
-                  opacity: 0,
-                  y: 5,
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                }}
-              >
+              <p className="contact-form__error">
                 Something went wrong. Please try again.
-              </motion.p>
+              </p>
             )}
           </div>
         </form>
-      </motion.div>
+      </div>
     </section>
   );
 };
