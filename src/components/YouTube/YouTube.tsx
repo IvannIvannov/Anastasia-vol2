@@ -1,10 +1,10 @@
-import { motion } from "motion/react";
+import { useEffect } from "react";
 
 import "./YouTube.css";
 
 const channels = [
   {
-    name: "Channel One",
+    name: "Anastasia Paskaleva",
     role: "My YouTube Channel · Video Editing · Content Creation",
     description:
       "My own YouTube channel, where I share lifestyle, beauty and personal content while taking care of everything from the idea to the final edit.",
@@ -12,7 +12,7 @@ const channels = [
     link: "https://www.youtube.com/@anastasiapaskaleva",
   },
   {
-    name: "Channel Two",
+    name: "Yulia Salakina",
     role: "Video Editing · Content Management",
     description:
       "Lifestyle, fashion and travel videos edited to feel natural, engaging and true to the creator behind the channel.",
@@ -22,69 +22,68 @@ const channels = [
 ];
 
 const YouTube = () => {
+  useEffect(() => {
+    const elements = document.querySelectorAll(".youtube .fade-up");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+          } else {
+            entry.target.classList.remove("show");
+          }
+        });
+      },
+      {
+        threshold: 0.12,
+      },
+    );
+
+    elements.forEach((element) => {
+      observer.observe(element);
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
     <section id="youtube" className="youtube">
-      <div className="youtube__header">
+      <div className="youtube__header fade-up">
         <p className="youtube__label">YouTube</p>
       </div>
 
       <div className="youtube__intro">
-        <motion.h2
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.25 }}
-          transition={{
-            duration: 0.9,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          className="youtube__title"
-        >
+        <h2 className="youtube__title fade-up">
           Beyond
           <br />
           short-form.
-        </motion.h2>
+        </h2>
 
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{
-            duration: 0.8,
-            delay: 0.15,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          className="youtube__description"
-        >
+        <p className="youtube__description fade-up">
           A selection of YouTube channels I work on, from video editing to
           ongoing content and channel management.
-        </motion.p>
+        </p>
       </div>
 
       <div className="youtube__grid">
         {channels.map((channel, index) => (
-          <motion.article
-            key={channel.name}
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{
-              duration: 0.85,
-              delay: index * 0.12,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            className="youtube-card"
-          >
+          <article key={channel.name} className="youtube-card fade-up">
             <a
               href={channel.link}
               target="_blank"
               rel="noreferrer"
               className="youtube-card__image-link"
+              aria-label={`Open ${channel.name} YouTube channel`}
             >
               <div className="youtube-card__image-wrapper">
                 <img
                   src={channel.image}
-                  alt={channel.name}
+                  alt={`${channel.name} YouTube channel`}
                   className="youtube-card__image"
+                  loading="lazy"
                 />
               </div>
             </a>
@@ -112,11 +111,11 @@ const YouTube = () => {
                   className="youtube-card__button"
                 >
                   Explore channel
-                  <span>↗</span>
+                  <span aria-hidden="true">↗</span>
                 </a>
               </div>
             </div>
-          </motion.article>
+          </article>
         ))}
       </div>
     </section>
