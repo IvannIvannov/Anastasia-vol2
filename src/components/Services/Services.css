@@ -1,6 +1,8 @@
 .services {
     padding: 8rem 3.5rem 9rem;
 
+    overflow: hidden;
+
     background-color: #60493e;
     color: #f3efe8;
 }
@@ -17,11 +19,11 @@
     border-bottom: 1px solid rgba(243, 239, 232, 0.14);
 }
 
-.services__label,
-.services__section-number {
+.services__label {
     margin: 0;
 
     font-size: 0.68rem;
+
     text-transform: uppercase;
     letter-spacing: 0.14em;
 
@@ -32,7 +34,9 @@
 
 .services__intro {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.42fr);
+
+    grid-template-columns:
+        minmax(0, 1fr) minmax(280px, 0.42fr);
 
     align-items: end;
 
@@ -50,6 +54,7 @@
     font-weight: 400;
 
     line-height: 0.96;
+
     letter-spacing: -0.045em;
 
     background: linear-gradient(90deg,
@@ -65,9 +70,11 @@
     background-clip: text;
 
     -webkit-text-fill-color: transparent;
+
     color: transparent;
 
-    animation: servicesTitleFlow 10s ease-in-out infinite;
+    animation:
+        servicesTitleFlow 10s ease-in-out infinite;
 }
 
 @keyframes servicesTitleFlow {
@@ -92,6 +99,7 @@
     margin: 0 0 0.25rem;
 
     font-size: 0.95rem;
+
     line-height: 1.7;
 
     opacity: 0.55;
@@ -111,18 +119,20 @@
 .service {
     position: relative;
 
-    border-top: 1px solid rgba(243, 239, 232, 0.14);
+    overflow: hidden;
 
-    overflow: visible;
+    border-top: 1px solid rgba(243, 239, 232, 0.14);
 
     transition:
         border-color 0.35s ease,
-        opacity 0.35s ease;
+        background-color 0.35s ease;
 }
 
 .service__main {
     display: grid;
-    grid-template-columns: 55px minmax(0, 1fr) auto;
+
+    grid-template-columns:
+        55px minmax(0, 1fr) auto;
 
     align-items: center;
 
@@ -150,10 +160,11 @@
     font-weight: 400;
 
     line-height: 1.05;
+
     letter-spacing: -0.025em;
 
     transition:
-        transform 0.35s ease,
+        transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
         opacity 0.35s ease;
 }
 
@@ -172,7 +183,7 @@
     opacity: 0.4;
 
     transition:
-        transform 0.35s ease,
+        transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
         opacity 0.35s ease;
 }
 
@@ -188,10 +199,10 @@
     transform: translateY(6px);
 
     transition:
-        max-height 0.45s ease,
-        opacity 0.35s ease,
-        transform 0.35s ease,
-        padding-bottom 0.45s ease;
+        max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.4s ease,
+        transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+        padding-bottom 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .service__description p {
@@ -200,46 +211,72 @@
     margin: 0 0 0 70px;
 
     font-size: 0.88rem;
+
     line-height: 1.7;
 
     opacity: 0.55;
 }
 
-/* HOVER */
+/* DESKTOP HOVER */
 
-.service:hover .service__description {
-    max-height: 130px;
+@media (hover: hover) and (pointer: fine) {
+    .service:hover {
+        border-color: rgba(243, 239, 232, 0.26);
+    }
 
-    padding-bottom: 1.6rem;
+    .service:hover .service__description {
+        max-height: 130px;
 
+        padding-bottom: 1.6rem;
+
+        opacity: 1;
+
+        transform: translateY(0);
+    }
+
+    .service:hover .service__title {
+        transform: translateX(5px);
+    }
+
+    .service:hover .service__arrow {
+        transform: translate(3px, -3px);
+
+        opacity: 0.9;
+    }
+}
+
+/* TOUCH DEVICES */
+
+@media (hover: none) {
+    .service__description {
+        max-height: none;
+
+        padding-bottom: 1.5rem;
+
+        opacity: 1;
+
+        transform: none;
+    }
+}
+
+/* GENTLE SCROLL REVEAL */
+
+.services .fade-up {
+    opacity: 0;
+
+    transform:
+        translateY(40px) scale(0.96);
+
+    transition:
+        opacity 0.6s ease,
+        transform 0.6s ease;
+}
+
+.services .fade-up.show {
     opacity: 1;
 
-    transform: translateY(0);
-}
-
-.service:hover .service__title {
-    transform: translateX(4px);
-}
-
-.service:hover .service__arrow {
-    transform: translate(3px, -3px);
-
-    opacity: 0.85;
-}
-
-/* REDUCED MOTION */
-
-@media (prefers-reduced-motion: reduce) {
-    .services__title {
-        animation: none;
-        background-position: 50% 50%;
-    }
-
-    .service__title,
-    .service__arrow,
-    .service__description {
-        transition: none;
-    }
+    transform:
+        translateY(0) scale(1);
 }
 
 /* TABLET */
@@ -267,10 +304,13 @@
 
 @media (max-width: 768px) {
     .services {
-        padding: 6rem 1.5rem 7rem;
+        padding:
+            6rem 1.5rem 7rem;
     }
 
     .services__intro {
+        gap: 1.8rem;
+
         padding: 3.5rem 0 4rem;
     }
 
@@ -278,8 +318,15 @@
         font-size: clamp(2.8rem, 13vw, 4.6rem);
     }
 
+    .services__subtitle {
+        max-width: 100%;
+
+        font-size: 0.92rem;
+    }
+
     .service__main {
-        grid-template-columns: 40px minmax(0, 1fr) auto;
+        grid-template-columns:
+            40px minmax(0, 1fr) auto;
 
         gap: 1rem;
 
@@ -291,9 +338,11 @@
     }
 
     .service__description p {
+        max-width: calc(100% - 50px);
+
         margin-left: 50px;
 
-        max-width: calc(100% - 50px);
+        font-size: 0.84rem;
     }
 }
 
@@ -301,21 +350,44 @@
 
 @media (max-width: 480px) {
     .services {
-        padding-left: 1.2rem;
-        padding-right: 1.2rem;
+        padding:
+            5rem 1.2rem 6rem;
     }
 
-    .services__label,
-    .services__section-number {
+    .services__label {
         font-size: 0.6rem;
     }
 
+    .services__intro {
+        padding:
+            3rem 0 3.5rem;
+    }
+
+    .services__title {
+        font-size: clamp(2.7rem, 13vw, 4rem);
+    }
+
+    .services__subtitle {
+        font-size: 0.88rem;
+
+        line-height: 1.65;
+    }
+
     .service__main {
-        grid-template-columns: 32px minmax(0, 1fr) auto;
+        grid-template-columns:
+            32px minmax(0, 1fr) auto;
+
+        gap: 0.8rem;
+
+        padding: 1.35rem 0;
     }
 
     .service__number {
         font-size: 0.56rem;
+    }
+
+    .service__title {
+        font-size: clamp(1.2rem, 5.8vw, 1.7rem);
     }
 
     .service__arrow {
@@ -325,9 +397,40 @@
         font-size: 0.85rem;
     }
 
+    .service__description {
+        padding-bottom: 1.25rem;
+    }
+
     .service__description p {
+        max-width: calc(100% - 42px);
+
         margin-left: 42px;
 
-        max-width: calc(100% - 42px);
+        font-size: 0.8rem;
+    }
+}
+
+/* REDUCED MOTION */
+
+@media (prefers-reduced-motion: reduce) {
+    .services__title {
+        animation: none;
+
+        background-position: 50% 50%;
+    }
+
+    .services .fade-up {
+        opacity: 1;
+
+        transform: none;
+
+        transition: none;
+    }
+
+    .service,
+    .service__title,
+    .service__arrow,
+    .service__description {
+        transition: none;
     }
 }
