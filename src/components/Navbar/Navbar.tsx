@@ -5,9 +5,9 @@ import { AnimatePresence, motion } from "motion/react";
 import "./Navbar.css";
 
 const navItems = [
-  { label: "Work", href: "#reels" },
   { label: "About", href: "#about" },
   { label: "Services", href: "#services" },
+  { label: "Work", href: "#reels" },
   { label: "Contact", href: "#contact" },
 ];
 
