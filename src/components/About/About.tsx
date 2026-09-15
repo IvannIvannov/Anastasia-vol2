@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { AnimatePresence, motion } from "motion/react";
 
@@ -11,6 +11,33 @@ import "./About.css";
 const About = () => {
   const [showMore, setShowMore] = useState(false);
 
+  useEffect(() => {
+    const elements = document.querySelectorAll(".about .fade-up");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+          } else {
+            entry.target.classList.remove("show");
+          }
+        });
+      },
+      {
+        threshold: 0.15,
+      },
+    );
+
+    elements.forEach((element) => {
+      observer.observe(element);
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   const handleCloseMoreAbout = () => {
     setShowMore(false);
   };
@@ -18,56 +45,28 @@ const About = () => {
   return (
     <>
       <section id="about" className="about">
-        <div className="about__header">
+        <div className="about__header fade-up">
           <p className="about__label">About</p>
         </div>
 
         <div className="about__layout">
-          <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{
-              duration: 1,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            className="about__image-wrapper"
-          >
+          <div className="about__image-wrapper fade-up">
             <img
               src={aboutImage}
               alt="Anastasia Paskaleva"
               className="about__image"
+              loading="lazy"
             />
-          </motion.div>
+          </div>
 
           <div className="about__content">
-            <motion.h2
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{
-                duration: 0.8,
-                delay: 0.1,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="about__title"
-            >
+            <h2 className="about__title fade-up">
               Ideas shaped
               <br />
               into something visual.
-            </motion.h2>
+            </h2>
 
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{
-                duration: 0.8,
-                delay: 0.2,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="about__text"
-            >
+            <div className="about__text fade-up">
               <p>
                 I&apos;m Anastasia — a creative working across video editing,
                 graphic design, UGC creation and social media.
@@ -78,28 +77,17 @@ const About = () => {
                 and true to the brand behind it. For me, the details matter —
                 from the first concept to the final frame.
               </p>
-            </motion.div>
+            </div>
 
             <button
               type="button"
-              className="about__link"
+              className="about__link fade-up"
               onClick={() => setShowMore((current) => !current)}
               aria-expanded={showMore}
             >
               <span>{showMore ? "Show less" : "More about me"}</span>
 
-              <motion.span
-                animate={{
-                  rotate: showMore ? 180 : 0,
-                }}
-                transition={{
-                  duration: 0.35,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-                className="about__link-arrow"
-              >
-                ↓
-              </motion.span>
+              <span className="about__link-arrow">↓</span>
             </button>
           </div>
         </div>
