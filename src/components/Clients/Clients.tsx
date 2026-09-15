@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { useEffect } from "react";
 
 import "./Clients.css";
 
@@ -14,42 +14,78 @@ const clients = [
 ];
 
 const Clients = () => {
+  useEffect(() => {
+    const elements = document.querySelectorAll(".clients .fade-up");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+          } else {
+            entry.target.classList.remove("show");
+          }
+        });
+      },
+      {
+        threshold: 0.12,
+      },
+    );
+
+    elements.forEach((element) => {
+      observer.observe(element);
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
     <section className="clients">
-      <div className="clients__header">
+      <div className="clients__header fade-up">
         <p className="clients__label">Selected clients</p>
       </div>
 
       <div className="clients__intro">
-        <motion.h2
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.25 }}
-          transition={{
-            duration: 0.9,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          className="clients__title"
-        >
+        <h2 className="clients__title fade-up">
           Brands I&apos;ve
           <br />
           created for.
-        </motion.h2>
+        </h2>
 
-        <p className="clients__description">
+        <p className="clients__description fade-up">
           A selection of brands I&apos;ve worked with across fashion, beauty,
           hospitality, lifestyle and digital media.
         </p>
       </div>
 
-      <div className="clients__marquee">
+      <div className="clients__marquee fade-up">
         <div className="clients__track">
-          {[...clients, ...clients].map((client, index) => (
-            <span key={`${client}-${index}`} className="clients__marquee-item">
-              {client}
-              <span className="clients__dot">•</span>
-            </span>
-          ))}
+          <div className="clients__group">
+            {clients.map((client) => (
+              <span key={client} className="clients__marquee-item">
+                {client}
+
+                <span className="clients__dot" aria-hidden="true">
+                  •
+                </span>
+              </span>
+            ))}
+          </div>
+
+          <div className="clients__group" aria-hidden="true">
+            {clients.map((client) => (
+              <span
+                key={`duplicate-${client}`}
+                className="clients__marquee-item"
+              >
+                {client}
+
+                <span className="clients__dot">•</span>
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </section>
