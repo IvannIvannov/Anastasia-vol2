@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { AnimatePresence, motion } from "motion/react";
 
@@ -175,6 +175,33 @@ const Reels = () => {
 
   const videoRefs = useRef<Record<number, HTMLVideoElement | null>>({});
 
+  useEffect(() => {
+    const elements = document.querySelectorAll(".reels .fade-up");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+          } else {
+            entry.target.classList.remove("show");
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+      },
+    );
+
+    elements.forEach((element) => {
+      observer.observe(element);
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   const visibleReels = useMemo(() => {
     if (!activeCategory) {
       return reels.filter((reel) => reel.featured);
@@ -185,7 +212,9 @@ const Reels = () => {
 
   const stopAllVideos = () => {
     Object.values(videoRefs.current).forEach((video) => {
-      if (!video) return;
+      if (!video) {
+        return;
+      }
 
       video.pause();
     });
@@ -268,44 +297,24 @@ const Reels = () => {
 
   return (
     <section className="reels" id="reels">
-      <div className="reels__header">
+      <div className="reels__header fade-up">
         <p className="reels__label">Work</p>
-
       </div>
 
       <div className="reels__intro">
-        <motion.div
-          initial={{
-            opacity: 0,
-            y: 35,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{
-            once: true,
-            amount: 0.25,
-          }}
-          transition={{
-            duration: 0.8,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-        >
-          <span className="reels__eyebrow">Short-form work</span>
+        <div className="fade-up">
+          <span className="reels__eyebrow">Selected short-form work</span>
 
-          <h2 className="reels__title">Stories in motion.</h2>
-        </motion.div>
+          <h2 className="reels__title">Made to be watched.</h2>
+        </div>
 
-        <p className="reels__subtitle">
-          A curated selection of short-form content across beauty, fashion,
-          lifestyle, food and hospitality.
+        <p className="reels__subtitle fade-up">
+          A selection of reels I&apos;ve created across beauty, fashion,
+          lifestyle, food, hospitality and branded content.
         </p>
       </div>
 
-      {/* CATEGORIES */}
-
-      <div className="reels__filters-wrapper">
+      <div className="reels__filters-wrapper fade-up">
         <div className="reels__filters">
           {categories.map((category) => {
             const count = reels.filter(
@@ -322,6 +331,7 @@ const Reels = () => {
                   isActive ? "reels__filter--active" : ""
                 }`}
                 onClick={() => handleCategoryChange(category.value)}
+                aria-pressed={isActive}
               >
                 <span>{category.label}</span>
 
@@ -332,9 +342,7 @@ const Reels = () => {
         </div>
       </div>
 
-      {/* SMALL CURRENT VIEW LABEL */}
-
-      <div className="reels__current">
+      <div className="reels__current fade-up">
         <span>
           {activeCategory
             ? categories.find((category) => category.value === activeCategory)
@@ -355,8 +363,6 @@ const Reels = () => {
         )}
       </div>
 
-      {/* VIDEOS */}
-
       <motion.div layout className="reels__grid">
         <AnimatePresence mode="popLayout">
           {visibleReels.map((reel, index) => {
@@ -375,8 +381,8 @@ const Reels = () => {
                 className={`reel-card ${isPlaying ? "reel-card--playing" : ""}`}
                 initial={{
                   opacity: 0,
-                  y: 18,
-                  scale: 0.985,
+                  y: 16,
+                  scale: 0.99,
                 }}
                 animate={{
                   opacity: 1,
@@ -386,11 +392,11 @@ const Reels = () => {
                 exit={{
                   opacity: 0,
                   y: 10,
-                  scale: 0.985,
+                  scale: 0.99,
                 }}
                 transition={{
-                  duration: 0.45,
-                  delay: Math.min(index * 0.035, 0.18),
+                  duration: 0.4,
+                  delay: Math.min(index * 0.03, 0.15),
                   ease: [0.22, 1, 0.36, 1],
                 }}
               >
@@ -424,7 +430,7 @@ const Reels = () => {
                         : ""
                     }`}
                     type="button"
-                    aria-label="Play or pause video"
+                    aria-label={isPlaying ? "Pause video" : "Play video"}
                     onClick={() => {
                       const video = videoRefs.current[reel.id];
 
