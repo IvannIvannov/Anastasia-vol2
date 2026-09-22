@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 import "./Navbar.css";
 
@@ -27,6 +27,11 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
 
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const firstMobileLinkRef = useRef<HTMLAnchorElement>(null);
+
+  const shouldReduceMotion = useReducedMotion();
+
   const lastScrollY = useRef(
     typeof window !== "undefined" ? window.scrollY : 0,
   );
@@ -39,7 +44,6 @@ const Navbar = () => {
 
       if (isOpen) {
         lastScrollY.current = currentScrollY;
-
         return;
       }
 
@@ -64,12 +68,45 @@ const Navbar = () => {
   }, [isOpen]);
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "";
+    const previousOverflow = document.body.style.overflow;
+
+    document.body.style.overflow = isOpen ? "hidden" : previousOverflow;
 
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousOverflow;
     };
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const focusTimer = window.setTimeout(
+      () => {
+        firstMobileLinkRef.current?.focus();
+      },
+      shouldReduceMotion ? 0 : 150,
+    );
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+        setIsVisible(true);
+
+        window.setTimeout(() => {
+          menuButtonRef.current?.focus();
+        }, 0);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, shouldReduceMotion]);
 
   const handleMenuToggle = () => {
     setIsOpen((current) => {
@@ -94,8 +131,13 @@ const Navbar = () => {
         !isVisible ? "navbar--hidden" : ""
       }`}
     >
-      <nav className="navbar__inner">
-        <a href="#top" className="navbar__brand" onClick={handleNavClick}>
+      <nav className="navbar__inner" aria-label="Main navigation">
+        <a
+          href="#top"
+          className="navbar__brand"
+          onClick={handleNavClick}
+          aria-label="Anastasia Paskaleva — go to top"
+        >
           Anastasia Paskaleva
         </a>
 
@@ -108,37 +150,51 @@ const Navbar = () => {
         </div>
 
         <button
+          ref={menuButtonRef}
           type="button"
           className={`navbar__menu-button ${
             isOpen ? "navbar__menu-button--open" : ""
           }`}
-          aria-label={isOpen ? "Close menu" : "Open menu"}
+          aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
           aria-expanded={isOpen}
+          aria-controls="mobile-navigation"
           onClick={handleMenuToggle}
         >
-          <span />
-          <span />
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
         </button>
       </nav>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id="mobile-navigation"
             className="navbar__mobile"
-            initial={{
-              opacity: 0,
-              y: -12,
-            }}
+            aria-label="Mobile navigation"
+            initial={
+              shouldReduceMotion
+                ? false
+                : {
+                    opacity: 0,
+                    y: -12,
+                  }
+            }
             animate={{
               opacity: 1,
               y: 0,
             }}
-            exit={{
-              opacity: 0,
-              y: -12,
-            }}
+            exit={
+              shouldReduceMotion
+                ? {
+                    opacity: 0,
+                  }
+                : {
+                    opacity: 0,
+                    y: -12,
+                  }
+            }
             transition={{
-              duration: 0.35,
+              duration: shouldReduceMotion ? 0 : 0.35,
               ease: [0.22, 1, 0.36, 1],
             }}
           >
@@ -146,19 +202,24 @@ const Navbar = () => {
               {navItems.map((item, index) => (
                 <motion.a
                   key={item.label}
+                  ref={index === 0 ? firstMobileLinkRef : undefined}
                   href={item.href}
                   onClick={handleNavClick}
-                  initial={{
-                    opacity: 0,
-                    y: 16,
-                  }}
+                  initial={
+                    shouldReduceMotion
+                      ? false
+                      : {
+                          opacity: 0,
+                          y: 16,
+                        }
+                  }
                   animate={{
                     opacity: 1,
                     y: 0,
                   }}
                   transition={{
-                    duration: 0.4,
-                    delay: index * 0.05,
+                    duration: shouldReduceMotion ? 0 : 0.4,
+                    delay: shouldReduceMotion ? 0 : index * 0.05,
                     ease: [0.22, 1, 0.36, 1],
                   }}
                 >

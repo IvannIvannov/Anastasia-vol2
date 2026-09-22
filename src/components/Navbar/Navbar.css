@@ -1,6 +1,5 @@
 .navbar {
     position: fixed;
-
     top: 0;
     left: 0;
     right: 0;
@@ -11,13 +10,13 @@
 
     background-color: rgba(243, 239, 232, 0.9);
 
+    border-bottom: 1px solid transparent;
+
     transition:
         transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
         background-color 0.35s ease,
         border-color 0.35s ease,
         backdrop-filter 0.35s ease;
-
-    border-bottom: 1px solid transparent;
 }
 
 /* HIDE ON SCROLL */
@@ -60,6 +59,7 @@
     font-weight: 500;
 
     text-transform: uppercase;
+
     letter-spacing: 0.13em;
 
     text-decoration: none;
@@ -76,7 +76,6 @@
 
 .navbar__brand:focus-visible {
     outline: 1px solid #181714;
-
     outline-offset: 6px;
 }
 
@@ -98,6 +97,7 @@
     font-weight: 400;
 
     text-transform: uppercase;
+
     letter-spacing: 0.12em;
 
     text-decoration: none;
@@ -122,7 +122,6 @@
     background-color: currentColor;
 
     transform: scaleX(0);
-
     transform-origin: right center;
 
     transition:
@@ -136,14 +135,12 @@
 
     .navbar__link:hover::after {
         transform: scaleX(1);
-
         transform-origin: left center;
     }
 }
 
 .navbar__link:focus-visible {
     outline: 1px solid #181714;
-
     outline-offset: 6px;
 }
 
@@ -203,7 +200,6 @@
 
 .navbar__menu-button:focus-visible {
     outline: 1px solid #181714;
-
     outline-offset: 6px;
 }
 
@@ -288,7 +284,6 @@
 
 .navbar__mobile-links a:focus-visible {
     outline: 1px solid #181714;
-
     outline-offset: 5px;
 }
 
