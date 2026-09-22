@@ -1,16 +1,25 @@
+import { lazy, Suspense } from "react";
+
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import Navbar from "./components/Navbar/Navbar";
 import Hero from "./components/Hero/Hero";
-import About from "./components/About/About";
-import Services from "./components/Services/Services";
-import Clients from "./components/Clients/Clients";
-import Reels from "./components/Reels/Reels";
-import YouTube from "./components/YouTube/YouTube";
-import Contact from "./components/Contact/Contact";
-import Footer from "./components/Footer/Footer";
 
-import NotFound from "./pages/NotFound/NotFound";
+const About = lazy(() => import("./components/About/About"));
+
+const Services = lazy(() => import("./components/Services/Services"));
+
+const Clients = lazy(() => import("./components/Clients/Clients"));
+
+const Reels = lazy(() => import("./components/Reels/Reels"));
+
+const YouTube = lazy(() => import("./components/YouTube/YouTube"));
+
+const Contact = lazy(() => import("./components/Contact/Contact"));
+
+const Footer = lazy(() => import("./components/Footer/Footer"));
+
+const NotFound = lazy(() => import("./pages/NotFound/NotFound"));
 
 const Home = () => {
   return (
@@ -19,28 +28,35 @@ const Home = () => {
 
       <main>
         <Hero />
-        <About />
-        <Services />
-        <Clients />
-        <Reels />
-        <YouTube />
-        <Contact />
+
+        <Suspense fallback={null}>
+          <About />
+          <Services />
+          <Clients />
+          <Reels />
+          <YouTube />
+          <Contact />
+        </Suspense>
       </main>
 
-      <Footer />
+      <Suspense fallback={null}>
+        <Footer />
+      </Suspense>
     </>
   );
 };
 
 const App = () => {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
+    <Suspense fallback={null}>
+      <Routes>
+        <Route path="/" element={<Home />} />
 
-      <Route path="/home" element={<Navigate to="/" replace />} />
+        <Route path="/home" element={<Navigate to="/" replace />} />
 
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Suspense>
   );
 };
 
