@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 
 import type { ChangeEvent, SubmitEvent } from "react";
 
+import useRevealOnScroll from "../../hooks/useRevealOnScroll";
+
 import "./Contact.css";
 
 type FormStatus = "idle" | "sending" | "success" | "error";
@@ -112,32 +114,10 @@ const Contact = () => {
 
   const turnstileWidgetIdRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    const elements = document.querySelectorAll(".contact .fade-up");
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("show");
-          } else {
-            entry.target.classList.remove("show");
-          }
-        });
-      },
-      {
-        threshold: 0.12,
-      },
-    );
-
-    elements.forEach((element) => {
-      observer.observe(element);
-    });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+  useRevealOnScroll({
+    selector: ".contact .fade-up",
+    threshold: 0.12,
+  });
 
   useEffect(() => {
     const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
@@ -342,8 +322,12 @@ const Contact = () => {
     }
 
     if (validationErrors.verification) {
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
       turnstileContainerRef.current?.scrollIntoView({
-        behavior: "smooth",
+        behavior: prefersReducedMotion ? "auto" : "smooth",
         block: "center",
       });
     }
