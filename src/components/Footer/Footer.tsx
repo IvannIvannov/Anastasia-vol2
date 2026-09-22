@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 import {
   FaEnvelope,
   FaInstagram,
@@ -8,35 +6,15 @@ import {
   FaYoutube,
 } from "react-icons/fa6";
 
+import useRevealOnScroll from "../../hooks/useRevealOnScroll";
+
 import "./Footer.css";
 
 const Footer = () => {
-  useEffect(() => {
-    const elements = document.querySelectorAll(".footer .fade-up");
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("show");
-          } else {
-            entry.target.classList.remove("show");
-          }
-        });
-      },
-      {
-        threshold: 0.12,
-      },
-    );
-
-    elements.forEach((element) => {
-      observer.observe(element);
-    });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+  useRevealOnScroll({
+    selector: ".footer .fade-up",
+    threshold: 0.12,
+  });
 
   return (
     <footer className="footer">
