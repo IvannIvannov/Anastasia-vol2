@@ -1,9 +1,8 @@
 .services {
     padding: 8rem 3.5rem 9rem;
 
-    overflow: hidden;
-
     background-color: #60493e;
+
     color: #f3efe8;
 }
 
@@ -11,7 +10,9 @@
 
 .services__header {
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
     padding-bottom: 1.2rem;
@@ -25,6 +26,7 @@
     font-size: 0.68rem;
 
     text-transform: uppercase;
+
     letter-spacing: 0.14em;
 
     opacity: 0.45;
@@ -51,6 +53,7 @@
     margin: 0;
 
     font-size: clamp(3.2rem, 5.2vw, 6rem);
+
     font-weight: 400;
 
     line-height: 0.96;
@@ -67,14 +70,14 @@
     background-size: 280% 100%;
 
     -webkit-background-clip: text;
+
     background-clip: text;
 
     -webkit-text-fill-color: transparent;
 
     color: transparent;
 
-    animation:
-        servicesTitleFlow 10s ease-in-out infinite;
+    animation: servicesTitleFlow 10s ease-in-out infinite;
 }
 
 @keyframes servicesTitleFlow {
@@ -109,6 +112,7 @@
 
 .services__list {
     display: flex;
+
     flex-direction: column;
 
     border-bottom: 1px solid rgba(243, 239, 232, 0.14);
@@ -138,7 +142,7 @@
 
     gap: 1.5rem;
 
-    padding: 1.65rem 0;
+    padding: 1.55rem 0;
 }
 
 /* NUMBER */
@@ -157,6 +161,7 @@
     margin: 0;
 
     font-size: clamp(1.45rem, 2.15vw, 2.3rem);
+
     font-weight: 400;
 
     line-height: 1.05;
@@ -172,10 +177,13 @@
 
 .service__arrow {
     display: inline-flex;
+
     align-items: center;
+
     justify-content: center;
 
     width: 34px;
+
     height: 34px;
 
     font-size: 0.95rem;
@@ -227,7 +235,7 @@
     .service:hover .service__description {
         max-height: 130px;
 
-        padding-bottom: 1.6rem;
+        padding-bottom: 1.45rem;
 
         opacity: 1;
 
@@ -251,7 +259,7 @@
     .service__description {
         max-height: none;
 
-        padding-bottom: 1.5rem;
+        padding-bottom: 1.25rem;
 
         opacity: 1;
 
@@ -284,6 +292,7 @@
 @media (max-width: 1000px) {
     .services {
         padding-left: 2.5rem;
+
         padding-right: 2.5rem;
     }
 
@@ -292,7 +301,7 @@
 
         gap: 2rem;
 
-        padding: 4rem 0 4.5rem;
+        padding: 4rem 0 4.25rem;
     }
 
     .services__subtitle {
@@ -305,13 +314,14 @@
 @media (max-width: 768px) {
     .services {
         padding:
-            6rem 1.5rem 7rem;
+            5.5rem 1.5rem 6rem;
     }
 
     .services__intro {
-        gap: 1.8rem;
+        gap: 1.5rem;
 
-        padding: 3.5rem 0 4rem;
+        padding:
+            3rem 0 3.25rem;
     }
 
     .services__title {
@@ -321,28 +331,62 @@
     .services__subtitle {
         max-width: 100%;
 
-        font-size: 0.92rem;
+        margin: 0;
+
+        font-size: 0.9rem;
+
+        line-height: 1.65;
     }
 
     .service__main {
         grid-template-columns:
-            40px minmax(0, 1fr) auto;
+            34px minmax(0, 1fr) 24px;
 
-        gap: 1rem;
+        gap: 0.8rem;
 
-        padding: 1.45rem 0;
+        padding: 1.2rem 0;
+    }
+
+    .service__number {
+        align-self: center;
+
+        font-size: 0.56rem;
+
+        opacity: 0.32;
     }
 
     .service__title {
-        font-size: clamp(1.3rem, 6vw, 2rem);
+        font-size: clamp(1.25rem, 5.7vw, 1.85rem);
+
+        line-height: 1.08;
+    }
+
+    .service__arrow {
+        width: 24px;
+
+        height: 24px;
+
+        font-size: 0.82rem;
+
+        justify-self: end;
+    }
+
+    .service__description {
+        padding-bottom: 1.15rem;
     }
 
     .service__description p {
-        max-width: calc(100% - 50px);
+        max-width: none;
 
-        margin-left: 50px;
+        margin-left: 42px;
 
-        font-size: 0.84rem;
+        margin-right: 1rem;
+
+        font-size: 0.82rem;
+
+        line-height: 1.6;
+
+        opacity: 0.58;
     }
 }
 
@@ -351,7 +395,7 @@
 @media (max-width: 480px) {
     .services {
         padding:
-            5rem 1.2rem 6rem;
+            5rem 1.2rem 5.5rem;
     }
 
     .services__label {
@@ -359,54 +403,59 @@
     }
 
     .services__intro {
+        gap: 1.35rem;
+
         padding:
-            3rem 0 3.5rem;
+            2.7rem 0 3rem;
     }
 
     .services__title {
-        font-size: clamp(2.7rem, 13vw, 4rem);
+        font-size: clamp(2.65rem, 12.5vw, 3.9rem);
     }
 
     .services__subtitle {
-        font-size: 0.88rem;
+        font-size: 0.86rem;
 
-        line-height: 1.65;
+        line-height: 1.6;
     }
 
     .service__main {
         grid-template-columns:
-            32px minmax(0, 1fr) auto;
+            30px minmax(0, 1fr) 22px;
 
-        gap: 0.8rem;
+        gap: 0.7rem;
 
-        padding: 1.35rem 0;
+        padding: 1.1rem 0;
     }
 
     .service__number {
-        font-size: 0.56rem;
+        font-size: 0.53rem;
     }
 
     .service__title {
-        font-size: clamp(1.2rem, 5.8vw, 1.7rem);
+        font-size: clamp(1.18rem, 5.5vw, 1.65rem);
     }
 
     .service__arrow {
-        width: 28px;
-        height: 28px;
+        width: 22px;
 
-        font-size: 0.85rem;
+        height: 22px;
+
+        font-size: 0.78rem;
     }
 
     .service__description {
-        padding-bottom: 1.25rem;
+        padding-bottom: 1rem;
     }
 
     .service__description p {
-        max-width: calc(100% - 42px);
+        margin-left: 37px;
 
-        margin-left: 42px;
+        margin-right: 0.5rem;
 
-        font-size: 0.8rem;
+        font-size: 0.78rem;
+
+        line-height: 1.58;
     }
 }
 
