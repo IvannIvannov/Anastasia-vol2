@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 import aboutImage from "../../assets/anastasia.png";
 
@@ -10,6 +9,8 @@ import "./About.css";
 
 const About = () => {
   const [showMore, setShowMore] = useState(false);
+
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     const elements = document.querySelectorAll(".about .fade-up");
@@ -44,7 +45,7 @@ const About = () => {
 
   return (
     <>
-      <section id="about" className="about">
+      <section id="about" className="about" aria-labelledby="about-title">
         <div className="about__header fade-up">
           <p className="about__label">About</p>
         </div>
@@ -53,14 +54,14 @@ const About = () => {
           <div className="about__image-wrapper fade-up">
             <img
               src={aboutImage}
-              alt="Anastasia Paskaleva"
+              alt="Portrait of Anastasia Paskaleva"
               className="about__image"
               loading="lazy"
             />
           </div>
 
           <div className="about__content">
-            <h2 className="about__title fade-up">
+            <h2 id="about-title" className="about__title fade-up">
               Ideas shaped
               <br />
               into something visual.
@@ -84,10 +85,13 @@ const About = () => {
               className="about__link fade-up"
               onClick={() => setShowMore((current) => !current)}
               aria-expanded={showMore}
+              aria-controls="more-about-section"
             >
               <span>{showMore ? "Show less" : "More about me"}</span>
 
-              <span className="about__link-arrow">↓</span>
+              <span className="about__link-arrow" aria-hidden="true">
+                ↓
+              </span>
             </button>
           </div>
         </div>
@@ -97,13 +101,14 @@ const About = () => {
         initial={false}
         onExitComplete={() => {
           document.getElementById("services")?.scrollIntoView({
-            behavior: "smooth",
+            behavior: shouldReduceMotion ? "auto" : "smooth",
             block: "start",
           });
         }}
       >
         {showMore && (
           <motion.div
+            id="more-about-section"
             key="more-about"
             initial={{
               height: 0,
@@ -116,7 +121,7 @@ const About = () => {
             }}
             transition={{
               height: {
-                duration: 0.75,
+                duration: shouldReduceMotion ? 0 : 0.75,
                 ease: [0.22, 1, 0.36, 1],
               },
             }}

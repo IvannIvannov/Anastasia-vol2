@@ -9,6 +9,7 @@
 
 .about__header {
     display: flex;
+
     align-items: center;
     justify-content: space-between;
 
@@ -23,6 +24,7 @@
     font-size: 0.75rem;
 
     text-transform: uppercase;
+
     letter-spacing: 0.14em;
 }
 
@@ -72,6 +74,7 @@
 
 .about__content {
     display: flex;
+
     flex-direction: column;
 
     min-height: min(78vh, 900px);
@@ -83,6 +86,7 @@
     margin: 0;
 
     font-size: clamp(3rem, 5vw, 6.5rem);
+
     font-weight: 400;
 
     line-height: 0.95;
@@ -92,6 +96,7 @@
 
 .about__text {
     display: flex;
+
     flex-direction: column;
 
     gap: 1.5rem;
@@ -115,6 +120,7 @@
 
 .about__link {
     display: flex;
+
     align-items: center;
     justify-content: space-between;
 
@@ -125,15 +131,18 @@
     padding: 1rem 0;
 
     border: 0;
+
     border-top: 1px solid rgba(24, 23, 20, 0.2);
     border-bottom: 1px solid rgba(24, 23, 20, 0.2);
 
     background: transparent;
+
     color: inherit;
 
     font-size: 0.75rem;
 
     text-transform: uppercase;
+
     letter-spacing: 0.14em;
 
     cursor: pointer;
@@ -145,6 +154,11 @@
 
 .about__link:hover {
     border-color: rgba(24, 23, 20, 0.45);
+}
+
+.about__link:focus-visible {
+    outline: 1px solid #181714;
+    outline-offset: 6px;
 }
 
 .about__link-arrow {
