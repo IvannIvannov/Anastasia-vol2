@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import useRevealOnScroll from "../../hooks/useRevealOnScroll";
 
 import "./Services.css";
 
@@ -30,32 +30,10 @@ const services = [
 ];
 
 const Services = () => {
-  useEffect(() => {
-    const elements = document.querySelectorAll(".services .fade-up");
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("show");
-          } else {
-            entry.target.classList.remove("show");
-          }
-        });
-      },
-      {
-        threshold: 0.12,
-      },
-    );
-
-    elements.forEach((element) => {
-      observer.observe(element);
-    });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+  useRevealOnScroll({
+    selector: ".services .fade-up",
+    threshold: 0.12,
+  });
 
   return (
     <section
