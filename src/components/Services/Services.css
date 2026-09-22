@@ -287,6 +287,26 @@
         translateY(0) scale(1);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .services__title {
+    animation: none;
+    background-position: 50% 50%;
+  }
+
+  .services .fade-up {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .service,
+  .service__title,
+  .service__arrow,
+  .service__description {
+    transition: none;
+  }
+}
+
 /* TABLET */
 
 @media (max-width: 1000px) {

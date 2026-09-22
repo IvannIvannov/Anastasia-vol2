@@ -58,13 +58,19 @@ const Services = () => {
   }, []);
 
   return (
-    <section id="services" className="services">
+    <section
+      id="services"
+      className="services"
+      aria-labelledby="services-title"
+    >
       <div className="services__header fade-up">
         <p className="services__label">Services</p>
       </div>
 
       <div className="services__intro">
-        <h2 className="services__title fade-up">What I do.</h2>
+        <h2 id="services-title" className="services__title fade-up">
+          What I do.
+        </h2>
 
         <p className="services__subtitle fade-up">
           From the first idea to the final detail, I create content that looks
@@ -72,11 +78,21 @@ const Services = () => {
         </p>
       </div>
 
-      <div className="services__list">
+      <div
+        className="services__list"
+        role="list"
+        aria-label="Creative services"
+      >
         {services.map((service) => (
-          <article key={service.title} className="service fade-up">
+          <article
+            key={service.title}
+            className="service fade-up"
+            role="listitem"
+          >
             <div className="service__main">
-              <span className="service__number">{service.number}</span>
+              <span className="service__number" aria-hidden="true">
+                {service.number}
+              </span>
 
               <h3 className="service__title">{service.title}</h3>
 
