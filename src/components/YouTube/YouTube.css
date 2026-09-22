@@ -339,23 +339,25 @@
 @media (max-width: 768px) {
     .youtube {
         padding:
-            6rem 1.5rem 7rem;
+            5.5rem 1.5rem 6rem;
     }
 
     .youtube__intro {
         grid-template-columns: 1fr;
 
-        gap: 2.5rem;
+        gap: 2rem;
 
         padding:
-            3.5rem 0 4.5rem;
+            3.2rem 0 4rem;
     }
 
     .youtube__title {
         font-size:
-            clamp(4rem,
-                20vw,
-                7rem);
+            clamp(3.8rem,
+                18vw,
+                6.5rem);
+
+        line-height: 0.88;
     }
 
     .youtube__description {
@@ -363,11 +365,13 @@
 
         margin: 0;
 
-        font-size: 0.95rem;
+        font-size: 0.93rem;
+
+        line-height: 1.62;
     }
 
     .youtube__grid {
-        gap: 5rem;
+        gap: 4.5rem;
     }
 
     .youtube-card,
@@ -376,7 +380,7 @@
 
         width: 100%;
 
-        gap: 2rem;
+        gap: 1.7rem;
     }
 
     .youtube-card:nth-child(2) .youtube-card__image-link,
@@ -393,7 +397,10 @@
     }
 
     .youtube-card__image-wrapper {
-        border-radius: 16px;
+        border-radius: 15px;
+
+        box-shadow:
+            0 20px 55px rgba(24, 23, 20, 0.07);
     }
 
     .youtube-card__content {
@@ -401,78 +408,26 @@
     }
 
     .youtube-card__index {
-        margin-bottom: 1.5rem;
-    }
+        margin-bottom: 1.2rem;
 
-    .youtube-card__content h3 {
-        font-size:
-            clamp(2.6rem,
-                10vw,
-                4.2rem);
-    }
-
-    .youtube-card__content-bottom {
-        margin-top: 2.5rem;
-
-        padding-top: 2.5rem;
-    }
-
-    .youtube-card__description {
-        max-width: 100%;
-    }
-}
-
-/* SMALL MOBILE */
-
-@media (max-width: 480px) {
-    .youtube {
-        padding:
-            5rem 1.2rem 6rem;
-    }
-
-    .youtube__label {
-        font-size: 0.65rem;
-    }
-
-    .youtube__intro {
-        gap: 2rem;
-
-        padding:
-            3rem 0 4rem;
-    }
-
-    .youtube__title {
-        font-size:
-            clamp(3.6rem,
-                19vw,
-                5.5rem);
-    }
-
-    .youtube__description {
-        font-size: 0.9rem;
-    }
-
-    .youtube__grid {
-        gap: 4.5rem;
-    }
-
-    .youtube-card {
-        gap: 1.7rem;
-    }
-
-    .youtube-card__image-wrapper {
-        border-radius: 13px;
+        font-size: 0.58rem;
     }
 
     .youtube-card__content h3 {
         font-size:
             clamp(2.4rem,
-                11vw,
+                9.5vw,
                 3.8rem);
+
+        line-height: 0.95;
     }
 
     .youtube-card__role {
+        margin-top: 0.9rem;
+
         font-size: 0.58rem;
+
+        line-height: 1.55;
     }
 
     .youtube-card__content-bottom {
@@ -482,13 +437,135 @@
     }
 
     .youtube-card__description {
+        max-width: 100%;
+
         margin-bottom: 1.6rem;
 
         font-size: 0.95rem;
+
+        line-height: 1.62;
     }
 
     .youtube-card__button {
+        padding: 0.9rem 0;
+
         font-size: 0.62rem;
+    }
+
+    .youtube-card__button span {
+        font-size: 0.9rem;
+    }
+}
+
+/* SMALL MOBILE */
+
+@media (max-width: 480px) {
+    .youtube {
+        padding:
+            5rem 1.2rem 5.5rem;
+    }
+
+    .youtube__label {
+        font-size: 0.65rem;
+    }
+
+    .youtube__intro {
+        gap: 1.7rem;
+
+        padding:
+            2.8rem 0 3.5rem;
+    }
+
+    .youtube__title {
+        font-size:
+            clamp(3.3rem,
+                16vw,
+                5rem);
+
+        line-height: 0.9;
+
+        letter-spacing: -0.06em;
+    }
+
+    .youtube__description {
+        font-size: 0.88rem;
+
+        line-height: 1.6;
+    }
+
+    .youtube__grid {
+        gap: 4rem;
+    }
+
+    .youtube-card,
+    .youtube-card:nth-child(2) {
+        gap: 1.5rem;
+    }
+
+    .youtube-card__image-wrapper {
+        border-radius: 12px;
+    }
+
+    .youtube-card__index {
+        margin-bottom: 1rem;
+
+        font-size: 0.54rem;
+    }
+
+    .youtube-card__content h3 {
+        font-size:
+            clamp(2.2rem,
+                9.8vw,
+                3.3rem);
+    }
+
+    .youtube-card__role {
+        margin-top: 0.8rem;
+
+        font-size: 0.54rem;
+
+        letter-spacing: 0.11em;
+    }
+
+    .youtube-card__content-bottom {
+        margin-top: 1.7rem;
+
+        padding-top: 1.7rem;
+    }
+
+    .youtube-card__description {
+        margin-bottom: 1.4rem;
+
+        font-size: 0.9rem;
+    }
+
+    .youtube-card__button {
+        padding: 0.85rem 0;
+
+        font-size: 0.58rem;
+    }
+}
+
+/* VERY SMALL MOBILE */
+
+@media (max-width: 360px) {
+    .youtube {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .youtube__title {
+        font-size:
+            clamp(3rem,
+                15vw,
+                4.5rem);
+    }
+
+    .youtube-card__content h3 {
+        font-size:
+            clamp(2rem,
+                9.5vw,
+                3rem);
     }
 }
 
