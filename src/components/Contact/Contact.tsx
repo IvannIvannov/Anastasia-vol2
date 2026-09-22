@@ -319,7 +319,34 @@ const Contact = () => {
 
     setErrors(newErrors);
 
-    return Object.keys(newErrors).length === 0;
+    return newErrors;
+  };
+
+  const focusFirstError = (validationErrors: FormErrors) => {
+    const fieldOrder: Array<keyof FormErrors> = [
+      "firstName",
+      "lastName",
+      "email",
+      "subject",
+      "message",
+    ];
+
+    const firstInvalidField = fieldOrder.find(
+      (field) => validationErrors[field],
+    );
+
+    if (firstInvalidField) {
+      document.getElementById(firstInvalidField)?.focus();
+
+      return;
+    }
+
+    if (validationErrors.verification) {
+      turnstileContainerRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
   };
 
   const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
@@ -329,10 +356,14 @@ const Contact = () => {
       return;
     }
 
-    const isValid = validateForm();
+    const validationErrors = validateForm();
 
-    if (!isValid) {
+    if (Object.keys(validationErrors).length > 0) {
       setStatus("idle");
+
+      window.setTimeout(() => {
+        focusFirstError(validationErrors);
+      }, 0);
 
       return;
     }
@@ -398,7 +429,7 @@ const Contact = () => {
   };
 
   return (
-    <section className="contact" id="contact">
+    <section className="contact" id="contact" aria-labelledby="contact-title">
       <div className="contact__header fade-up">
         <p className="contact__label">Contact</p>
       </div>
@@ -407,9 +438,11 @@ const Contact = () => {
         <div className="contact__intro fade-up">
           <span className="contact__eyebrow">Start a conversation</span>
 
-          <h2 className="contact__title">Get in touch</h2>
+          <h2 id="contact-title" className="contact__title">
+            Get in touch
+          </h2>
 
-          <p className="contact__subtitle">
+          <p id="contact-description" className="contact__subtitle">
             Have a project, collaboration or idea in mind? I&apos;d love to hear
             about it.
           </p>
@@ -419,6 +452,8 @@ const Contact = () => {
           className="contact-form fade-up"
           onSubmit={handleSubmit}
           noValidate
+          aria-labelledby="contact-title"
+          aria-describedby="contact-description"
         >
           <div className="contact-form__row">
             <div
@@ -436,6 +471,7 @@ const Contact = () => {
                 onChange={handleChange}
                 maxLength={60}
                 autoComplete="given-name"
+                required
                 aria-invalid={Boolean(errors.firstName)}
                 aria-describedby={
                   errors.firstName ? "firstName-error" : undefined
@@ -464,6 +500,7 @@ const Contact = () => {
                 onChange={handleChange}
                 maxLength={60}
                 autoComplete="family-name"
+                required
                 aria-invalid={Boolean(errors.lastName)}
                 aria-describedby={
                   errors.lastName ? "lastName-error" : undefined
@@ -494,6 +531,7 @@ const Contact = () => {
                 onChange={handleChange}
                 maxLength={150}
                 autoComplete="email"
+                required
                 aria-invalid={Boolean(errors.email)}
                 aria-describedby={errors.email ? "email-error" : undefined}
               />
@@ -534,6 +572,7 @@ const Contact = () => {
               value={formData.subject ?? ""}
               onChange={handleChange}
               maxLength={150}
+              required
               aria-invalid={Boolean(errors.subject)}
               aria-describedby={errors.subject ? "subject-error" : undefined}
             />
@@ -559,6 +598,7 @@ const Contact = () => {
               onChange={handleChange}
               maxLength={3000}
               rows={7}
+              required
               aria-invalid={Boolean(errors.message)}
               aria-describedby={errors.message ? "message-error" : undefined}
             />
@@ -585,10 +625,16 @@ const Contact = () => {
             <div
               className="contact-form__turnstile"
               ref={turnstileContainerRef}
+              aria-describedby={
+                errors.verification ? "verification-error" : undefined
+              }
             />
 
             {errors.verification && (
-              <p className="contact-form__field-error contact-form__verification-error">
+              <p
+                id="verification-error"
+                className="contact-form__field-error contact-form__verification-error"
+              >
                 {errors.verification}
               </p>
             )}
@@ -598,11 +644,17 @@ const Contact = () => {
             className="contact-form__submit"
             type="submit"
             disabled={status === "sending"}
+            aria-busy={status === "sending"}
           >
             {status === "sending" ? "Sending..." : "Send message"}
           </button>
 
-          <div className="contact-form__status" aria-live="polite">
+          <div
+            className="contact-form__status"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          >
             {status === "success" && (
               <p className="contact-form__success">
                 Thank you! Your message has been sent successfully.
