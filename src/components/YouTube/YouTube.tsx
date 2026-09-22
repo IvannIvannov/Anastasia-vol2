@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import useRevealOnScroll from "../../hooks/useRevealOnScroll";
 
 import "./YouTube.css";
 
@@ -22,32 +22,10 @@ const channels = [
 ];
 
 const YouTube = () => {
-  useEffect(() => {
-    const elements = document.querySelectorAll(".youtube .fade-up");
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("show");
-          } else {
-            entry.target.classList.remove("show");
-          }
-        });
-      },
-      {
-        threshold: 0.12,
-      },
-    );
-
-    elements.forEach((element) => {
-      observer.observe(element);
-    });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+  useRevealOnScroll({
+    selector: ".youtube .fade-up",
+    threshold: 0.12,
+  });
 
   return (
     <section id="youtube" className="youtube" aria-labelledby="youtube-title">
@@ -92,6 +70,7 @@ const YouTube = () => {
                     alt={`${channel.name} YouTube channel preview`}
                     className="youtube-card__image"
                     loading="lazy"
+                    decoding="async"
                   />
                 </div>
               </a>

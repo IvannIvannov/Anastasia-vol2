@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
+import useRevealOnScroll from "../../hooks/useRevealOnScroll";
+
 import "./Reels.css";
 
 type ReelCategory =
@@ -164,6 +166,17 @@ const reels: Reel[] = [
   },
 ];
 
+const categoryCounts = categories.reduce(
+  (counts, category) => {
+    counts[category.value] = reels.filter(
+      (reel) => reel.category === category.value,
+    ).length;
+
+    return counts;
+  },
+  {} as Record<ReelCategory, number>,
+);
+
 const Reels = () => {
   const [activeCategory, setActiveCategory] = useState<ReelCategory | null>(
     null,
@@ -177,32 +190,10 @@ const Reels = () => {
 
   const shouldReduceMotion = useReducedMotion();
 
-  useEffect(() => {
-    const elements = document.querySelectorAll(".reels .fade-up");
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("show");
-          } else {
-            entry.target.classList.remove("show");
-          }
-        });
-      },
-      {
-        threshold: 0.1,
-      },
-    );
-
-    elements.forEach((element) => {
-      observer.observe(element);
-    });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+  useRevealOnScroll({
+    selector: ".reels .fade-up",
+    threshold: 0.1,
+  });
 
   const visibleReels = useMemo(() => {
     if (!activeCategory) {
@@ -229,6 +220,33 @@ const Reels = () => {
     setManuallyPaused(null);
   };
 
+  useEffect(() => {
+    const currentVideoRefs = videoRefs.current;
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        return;
+      }
+
+      Object.values(currentVideoRefs).forEach((video) => {
+        video?.pause();
+      });
+
+      setPlayingVideo(null);
+      setManuallyPaused(null);
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+
+      Object.values(currentVideoRefs).forEach((video) => {
+        video?.pause();
+      });
+    };
+  }, []);
+
   const handleCategoryChange = (category: ReelCategory) => {
     stopAllVideos();
 
@@ -241,7 +259,7 @@ const Reels = () => {
   };
 
   const playVideo = (video: HTMLVideoElement, id: number) => {
-    if (manuallyPaused === id) {
+    if (manuallyPaused === id || shouldReduceMotion || document.hidden) {
       return;
     }
 
@@ -329,9 +347,7 @@ const Reels = () => {
           aria-label="Filter reels by category"
         >
           {categories.map((category) => {
-            const count = reels.filter(
-              (reel) => reel.category === category.value,
-            ).length;
+            const count = categoryCounts[category.value];
 
             const isActive = activeCategory === category.value;
 
