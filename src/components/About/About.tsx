@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 import aboutImage from "../../assets/anastasia.png";
 
 import MoreAbout from "../MoreAbout/MoreAbout";
+
+import useRevealOnScroll from "../../hooks/useRevealOnScroll";
 
 import "./About.css";
 
@@ -12,32 +14,10 @@ const About = () => {
 
   const shouldReduceMotion = useReducedMotion();
 
-  useEffect(() => {
-    const elements = document.querySelectorAll(".about .fade-up");
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("show");
-          } else {
-            entry.target.classList.remove("show");
-          }
-        });
-      },
-      {
-        threshold: 0.15,
-      },
-    );
-
-    elements.forEach((element) => {
-      observer.observe(element);
-    });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+  useRevealOnScroll({
+    selector: ".about .fade-up",
+    threshold: 0.15,
+  });
 
   const handleCloseMoreAbout = () => {
     setShowMore(false);
