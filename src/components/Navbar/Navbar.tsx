@@ -1,14 +1,25 @@
 import { useEffect, useRef, useState } from "react";
-
 import { AnimatePresence, motion } from "motion/react";
 
 import "./Navbar.css";
 
 const navItems = [
-  { label: "About", href: "#about" },
-  { label: "Services", href: "#services" },
-  { label: "Work", href: "#reels" },
-  { label: "Contact", href: "#contact" },
+  {
+    label: "About",
+    href: "#about",
+  },
+  {
+    label: "Services",
+    href: "#services",
+  },
+  {
+    label: "Work",
+    href: "#reels",
+  },
+  {
+    label: "Contact",
+    href: "#contact",
+  },
 ];
 
 const Navbar = () => {
@@ -28,6 +39,7 @@ const Navbar = () => {
 
       if (isOpen) {
         lastScrollY.current = currentScrollY;
+
         return;
       }
 
@@ -78,9 +90,9 @@ const Navbar = () => {
 
   return (
     <header
-      className={`navbar ${
-        scrolled ? "navbar--scrolled" : ""
-      } ${!isVisible ? "navbar--hidden" : ""}`}
+      className={`navbar ${scrolled ? "navbar--scrolled" : ""} ${
+        !isVisible ? "navbar--hidden" : ""
+      }`}
     >
       <nav className="navbar__inner">
         <a href="#top" className="navbar__brand" onClick={handleNavClick}>
@@ -151,14 +163,10 @@ const Navbar = () => {
                   }}
                 >
                   <span>{item.label}</span>
-                  <span>↗</span>
+
+                  <span aria-hidden="true">↗</span>
                 </motion.a>
               ))}
-            </div>
-
-            <div className="navbar__mobile-footer">
-              <span>Creative Portfolio · 2026</span>
-              <span>Plovdiv / Sofia, Bulgaria</span>
             </div>
           </motion.div>
         )}

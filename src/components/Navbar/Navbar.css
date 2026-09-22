@@ -1,68 +1,86 @@
 .navbar {
     position: fixed;
+
     top: 0;
     left: 0;
+    right: 0;
+
     z-index: 1000;
 
-    width: 100%;
-
-    color: #181714;
-
     transform: translateY(0);
+
+    background-color: rgba(243, 239, 232, 0.9);
 
     transition:
         transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
         background-color 0.35s ease,
-        backdrop-filter 0.35s ease,
-        border-color 0.35s ease;
+        border-color 0.35s ease,
+        backdrop-filter 0.35s ease;
+
+    border-bottom: 1px solid transparent;
 }
+
+/* HIDE ON SCROLL */
 
 .navbar--hidden {
     transform: translateY(-110%);
 }
 
+/* SCROLLED */
+
 .navbar--scrolled {
-    background-color: rgba(243, 239, 232, 0.86);
+    background-color: rgba(243, 239, 232, 0.94);
+
+    border-bottom: 1px solid rgba(24, 23, 20, 0.08);
 
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-
-    border-bottom: 1px solid rgba(24, 23, 20, 0.08);
 }
 
+/* INNER */
+
 .navbar__inner {
+    position: relative;
+
+    z-index: 1002;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    width: 100%;
-
     padding: 1.5rem 3.5rem;
-
-    box-sizing: border-box;
 }
 
+/* BRAND */
+
 .navbar__brand {
-    position: relative;
-    z-index: 2;
-
-    color: inherit;
-
-    text-decoration: none;
+    color: #181714;
 
     font-size: 0.76rem;
     font-weight: 500;
 
     text-transform: uppercase;
+    letter-spacing: 0.13em;
 
-    letter-spacing: 0.14em;
+    text-decoration: none;
 
-    transition: opacity 0.3s ease;
+    transition:
+        opacity 0.3s ease;
 }
 
-.navbar__brand:hover {
-    opacity: 0.55;
+@media (hover: hover) and (pointer: fine) {
+    .navbar__brand:hover {
+        opacity: 0.6;
+    }
 }
+
+.navbar__brand:focus-visible {
+    outline: 1px solid #181714;
+
+    outline-offset: 6px;
+}
+
+/* DESKTOP NAV */
 
 .navbar__desktop {
     display: flex;
@@ -74,22 +92,20 @@
 .navbar__link {
     position: relative;
 
-    padding-bottom: 0.2rem;
+    color: #181714;
 
-    color: inherit;
+    font-size: 0.68rem;
+    font-weight: 400;
+
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
 
     text-decoration: none;
 
-    font-size: 0.68rem;
-    font-weight: 500;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.14em;
-
     opacity: 0.72;
 
-    transition: opacity 0.3s ease;
+    transition:
+        opacity 0.3s ease;
 }
 
 .navbar__link::after {
@@ -98,36 +114,48 @@
     position: absolute;
 
     left: 0;
-    bottom: 0;
+    right: 0;
+    bottom: -0.35rem;
 
-    width: 100%;
     height: 1px;
 
-    background: currentColor;
+    background-color: currentColor;
 
     transform: scaleX(0);
+
     transform-origin: right center;
 
-    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    transition:
+        transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.navbar__link:hover {
-    opacity: 1;
+@media (hover: hover) and (pointer: fine) {
+    .navbar__link:hover {
+        opacity: 1;
+    }
+
+    .navbar__link:hover::after {
+        transform: scaleX(1);
+
+        transform-origin: left center;
+    }
 }
 
-.navbar__link:hover::after {
-    transform: scaleX(1);
-    transform-origin: left center;
+.navbar__link:focus-visible {
+    outline: 1px solid #181714;
+
+    outline-offset: 6px;
 }
+
+/* MENU BUTTON */
 
 .navbar__menu-button {
+    position: relative;
+
     display: none;
 
-    position: relative;
-    z-index: 2;
-
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 22px;
 
     padding: 0;
 
@@ -135,20 +163,18 @@
 
     background: transparent;
 
-    color: inherit;
-
     cursor: pointer;
 }
 
 .navbar__menu-button span {
     position: absolute;
 
-    left: 4px;
+    left: 0;
 
-    width: 24px;
+    width: 100%;
     height: 1px;
 
-    background: currentColor;
+    background-color: #181714;
 
     transition:
         top 0.35s cubic-bezier(0.22, 1, 0.36, 1),
@@ -156,40 +182,147 @@
 }
 
 .navbar__menu-button span:first-child {
-    top: 11px;
+    top: 6px;
 }
 
 .navbar__menu-button span:last-child {
-    top: 20px;
+    top: 15px;
 }
 
 .navbar__menu-button--open span:first-child {
-    top: 16px;
+    top: 10px;
 
     transform: rotate(45deg);
 }
 
 .navbar__menu-button--open span:last-child {
-    top: 16px;
+    top: 10px;
 
     transform: rotate(-45deg);
 }
 
-.navbar__mobile {
-    display: none;
+.navbar__menu-button:focus-visible {
+    outline: 1px solid #181714;
+
+    outline-offset: 6px;
 }
 
-.navbar__brand:focus-visible,
-.navbar__link:focus-visible,
-.navbar__menu-button:focus-visible,
+/* MOBILE MENU */
+
+.navbar__mobile {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1001;
+
+    display: flex;
+    flex-direction: column;
+
+    min-height: 100dvh;
+
+    padding:
+        5.7rem 1.5rem 2rem;
+
+    background-color: #f3efe8;
+    color: #181714;
+}
+
+.navbar__mobile-links {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+
+    margin-top: 1.2rem;
+
+    border-top: 1px solid rgba(24, 23, 20, 0.1);
+}
+
+.navbar__mobile-links a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 2rem;
+
+    width: 100%;
+
+    padding: 1.25rem 0;
+
+    border-bottom: 1px solid rgba(24, 23, 20, 0.1);
+
+    color: inherit;
+
+    font-family: inherit;
+
+    font-size: clamp(1.9rem, 8vw, 2.7rem);
+    font-weight: 400;
+
+    line-height: 1;
+
+    letter-spacing: -0.035em;
+
+    text-decoration: none;
+}
+
+.navbar__mobile-links a>span:last-child {
+    flex-shrink: 0;
+
+    font-size: 0.8rem;
+
+    opacity: 0.42;
+
+    transition:
+        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.3s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .navbar__mobile-links a:hover>span:last-child {
+        transform: translate(3px, -3px);
+
+        opacity: 0.8;
+    }
+}
+
 .navbar__mobile-links a:focus-visible {
-    outline: 1px solid currentColor;
+    outline: 1px solid #181714;
+
     outline-offset: 5px;
 }
 
+/* SCROLL OFFSETS */
+
+#about,
+#services,
+#reels,
+#contact {
+    scroll-margin-top: 150px;
+}
+
+/* TABLET */
+
+@media (max-width: 1000px) {
+    .navbar__inner {
+        padding:
+            1.4rem 2.5rem;
+    }
+
+    #about,
+    #services,
+    #reels,
+    #contact {
+        scroll-margin-top: 130px;
+    }
+}
+
+/* MOBILE */
+
 @media (max-width: 768px) {
     .navbar__inner {
-        padding: 1.3rem 1.4rem;
+        padding:
+            1.3rem 1.5rem;
     }
 
     .navbar__desktop {
@@ -200,99 +333,42 @@
         display: block;
     }
 
+    .navbar__brand {
+        font-size: 0.68rem;
+
+        letter-spacing: 0.12em;
+    }
+
     .navbar__mobile {
-        position: fixed;
-
-        inset: 0;
-
-        z-index: 1;
-
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-
-        min-height: 100dvh;
-
         padding:
-            7rem 1.4rem 2rem;
-
-        box-sizing: border-box;
-
-        background-color: #f3efe8;
-
-        color: #181714;
+            5.4rem 1.5rem 1.5rem;
     }
 
     .navbar__mobile-links {
-        display: flex;
-        flex-direction: column;
+        margin-top: 0.7rem;
     }
 
     .navbar__mobile-links a {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+        padding:
+            1.2rem 0;
 
-        padding: 1.4rem 0;
-
-        border-bottom: 1px solid rgba(24, 23, 20, 0.12);
-
-        color: inherit;
-
-        text-decoration: none;
-
-        font-family: Georgia, "Times New Roman", serif;
-
-        font-size: clamp(2.5rem, 11vw, 4.6rem);
-        font-weight: 400;
+        font-size:
+            clamp(1.85rem,
+                8vw,
+                2.5rem);
 
         line-height: 1;
-
-        letter-spacing: -0.045em;
     }
 
-    .navbar__mobile-links a:first-child {
-        border-top: 1px solid rgba(24, 23, 20, 0.12);
-    }
-
-    .navbar__mobile-links a span:last-child {
-        font-family: inherit;
-
-        font-size: 1rem;
-
-        opacity: 0.35;
-
-        transition:
-            transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-            opacity 0.35s ease;
-    }
-
-    .navbar__mobile-links a:hover span:last-child {
-        transform: translate(3px, -3px);
-
-        opacity: 0.7;
-    }
-
-    .navbar__mobile-footer {
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-
-        gap: 1rem;
-
-        font-size: 0.6rem;
-
-        text-transform: uppercase;
-
-        letter-spacing: 0.12em;
-
-        opacity: 0.42;
-    }
-
-    .navbar__mobile-footer span:last-child {
-        text-align: right;
+    #about,
+    #services,
+    #reels,
+    #contact {
+        scroll-margin-top: 105px;
     }
 }
+
+/* SMALL MOBILE */
 
 @media (max-width: 480px) {
     .navbar__inner {
@@ -301,26 +377,66 @@
     }
 
     .navbar__brand {
-        font-size: 0.66rem;
+        font-size: 0.62rem;
 
-        letter-spacing: 0.12em;
+        letter-spacing: 0.11em;
+    }
+
+    .navbar__menu-button {
+        width: 26px;
     }
 
     .navbar__mobile {
         padding:
-            6.5rem 1.2rem 1.6rem;
+            5rem 1.2rem 1.2rem;
     }
 
     .navbar__mobile-links a {
-        padding: 1.25rem 0;
+        padding:
+            1.05rem 0;
 
-        font-size: clamp(2.4rem, 12vw, 3.8rem);
+        font-size:
+            clamp(1.7rem,
+                7.5vw,
+                2.2rem);
+
+        letter-spacing: -0.03em;
     }
 
-    .navbar__mobile-footer {
-        font-size: 0.55rem;
+    .navbar__mobile-links a>span:last-child {
+        font-size: 0.72rem;
+    }
+
+    #about,
+    #services,
+    #reels,
+    #contact {
+        scroll-margin-top: 90px;
     }
 }
+
+/* VERY SMALL MOBILE */
+
+@media (max-width: 360px) {
+    .navbar__inner {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .navbar__mobile {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .navbar__mobile-links a {
+        font-size:
+            clamp(1.6rem,
+                7vw,
+                2rem);
+    }
+}
+
+/* REDUCED MOTION */
 
 @media (prefers-reduced-motion: reduce) {
 
@@ -329,7 +445,7 @@
     .navbar__link,
     .navbar__link::after,
     .navbar__menu-button span,
-    .navbar__mobile-links a span:last-child {
+    .navbar__mobile-links a>span:last-child {
         transition: none;
     }
 }
