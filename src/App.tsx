@@ -1,3 +1,5 @@
+import { Navigate, Route, Routes } from "react-router-dom";
+
 import Navbar from "./components/Navbar/Navbar";
 import Hero from "./components/Hero/Hero";
 import About from "./components/About/About";
@@ -8,20 +10,38 @@ import YouTube from "./components/YouTube/YouTube";
 import Contact from "./components/Contact/Contact";
 import Footer from "./components/Footer/Footer";
 
-function App() {
+import NotFound from "./pages/NotFound/NotFound";
+
+const Home = () => {
   return (
     <>
       <Navbar />
-      <Hero />
-      <About />
-      <Services />
-      <Clients />
-      <Reels />
-      <YouTube />
-      <Contact />
+
+      <main>
+        <Hero />
+        <About />
+        <Services />
+        <Clients />
+        <Reels />
+        <YouTube />
+        <Contact />
+      </main>
+
       <Footer />
     </>
   );
-}
+};
+
+const App = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+
+      <Route path="/home" element={<Navigate to="/" replace />} />
+
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
 
 export default App;

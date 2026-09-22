@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 import "./NotFound.css";
 
 const NotFound = () => {
@@ -13,10 +15,11 @@ const NotFound = () => {
           moved.
         </p>
 
-        <a href="/" className="not-found__button">
+        <Link to="/" className="not-found__button">
           <span>Back to home</span>
+
           <span aria-hidden="true">↗</span>
-        </a>
+        </Link>
       </div>
     </main>
   );
