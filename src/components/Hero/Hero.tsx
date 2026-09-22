@@ -31,10 +31,10 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="hero" id="top">
+    <section className="hero" id="top" aria-labelledby="hero-title">
       <div className="hero__layout">
         <div className="hero__content">
-          <h1 className="hero__title hero__fade-up">
+          <h1 id="hero-title" className="hero__title hero__fade-up">
             Creative work,
             <br />
             made with
@@ -46,11 +46,18 @@ export default function Hero() {
             and graphic design to UGC and social media.
           </p>
 
-          <div className="hero__roles hero__fade-up">
-            <span>Video Editing</span>
-            <span>Graphic Design</span>
-            <span>UGC Creation</span>
-            <span>Social Media</span>
+          <div
+            className="hero__roles hero__fade-up"
+            role="list"
+            aria-label="Creative services"
+          >
+            <span role="listitem">Video Editing</span>
+
+            <span role="listitem">Graphic Design</span>
+
+            <span role="listitem">UGC Creation</span>
+
+            <span role="listitem">Social Media</span>
           </div>
         </div>
 
@@ -58,7 +65,7 @@ export default function Hero() {
           <div className="hero__image-wrapper">
             <img
               src="/hero/anastasia-hero.jpg"
-              alt="Anastasia Paskaleva"
+              alt="Portrait of Anastasia Paskaleva"
               className="hero__image"
               loading="eager"
               fetchPriority="high"
@@ -67,6 +74,7 @@ export default function Hero() {
 
           <div className="hero__image-meta">
             <span>Plovdiv / Sofia, Bulgaria</span>
+
             <span>Scroll to explore ↓</span>
           </div>
         </div>

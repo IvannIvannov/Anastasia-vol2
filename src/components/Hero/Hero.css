@@ -43,6 +43,7 @@
     margin: 0;
 
     font-size: clamp(4.2rem, 7.2vw, 8.5rem);
+
     font-weight: 400;
 
     line-height: 0.92;
@@ -74,6 +75,7 @@
 
 .hero__roles {
     display: flex;
+
     flex-wrap: wrap;
 
     gap: 0.7rem;
@@ -83,18 +85,22 @@
 
 .hero__roles span {
     display: inline-flex;
+
     align-items: center;
     justify-content: center;
 
     padding: 0.65rem 1rem;
 
     border: 1px solid rgba(24, 23, 20, 0.16);
+
     border-radius: 999px;
 
     font-size: 0.65rem;
 
     text-align: center;
+
     text-transform: uppercase;
+
     letter-spacing: 0.12em;
 
     white-space: nowrap;
@@ -119,6 +125,7 @@
 
 .hero__visual {
     width: 100%;
+
     max-width: 520px;
 
     justify-self: end;
@@ -158,6 +165,7 @@
 
 .hero__image-meta {
     display: flex;
+
     align-items: center;
     justify-content: space-between;
 
@@ -168,6 +176,7 @@
     font-size: 0.62rem;
 
     text-transform: uppercase;
+
     letter-spacing: 0.12em;
 
     opacity: 0.5;
@@ -177,6 +186,7 @@
 
 .hero__bottom {
     display: flex;
+
     align-items: center;
     justify-content: space-between;
 
@@ -189,6 +199,7 @@
     font-size: 0.68rem;
 
     text-transform: uppercase;
+
     letter-spacing: 0.13em;
 }
 
@@ -410,6 +421,7 @@
 
     .hero__image-meta {
         flex-direction: column;
+
         align-items: flex-start;
 
         gap: 0.3rem;
