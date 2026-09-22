@@ -42,13 +42,13 @@ const Clients = () => {
   }, []);
 
   return (
-    <section className="clients">
+    <section className="clients" aria-labelledby="clients-title">
       <div className="clients__header fade-up">
         <p className="clients__label">Selected clients</p>
       </div>
 
       <div className="clients__intro">
-        <h2 className="clients__title fade-up">
+        <h2 id="clients-title" className="clients__title fade-up">
           Brands I&apos;ve
           <br />
           created for.
@@ -62,9 +62,17 @@ const Clients = () => {
 
       <div className="clients__marquee fade-up">
         <div className="clients__track">
-          <div className="clients__group">
+          <div
+            className="clients__group"
+            role="list"
+            aria-label="Selected client brands"
+          >
             {clients.map((client) => (
-              <span key={client} className="clients__marquee-item">
+              <span
+                key={client}
+                className="clients__marquee-item"
+                role="listitem"
+              >
                 {client}
 
                 <span className="clients__dot" aria-hidden="true">
@@ -82,7 +90,9 @@ const Clients = () => {
               >
                 {client}
 
-                <span className="clients__dot">•</span>
+                <span className="clients__dot" aria-hidden="true">
+                  •
+                </span>
               </span>
             ))}
           </div>
