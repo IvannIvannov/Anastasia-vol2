@@ -1,34 +1,12 @@
-import { useEffect } from "react";
+import useRevealOnScroll from "../../hooks/useRevealOnScroll";
 
 import "./Hero.css";
 
 export default function Hero() {
-  useEffect(() => {
-    const elements = document.querySelectorAll(".hero .hero__fade-up");
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("show");
-          } else {
-            entry.target.classList.remove("show");
-          }
-        });
-      },
-      {
-        threshold: 0.12,
-      },
-    );
-
-    elements.forEach((element) => {
-      observer.observe(element);
-    });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+  useRevealOnScroll({
+    selector: ".hero .hero__fade-up",
+    threshold: 0.12,
+  });
 
   return (
     <section className="hero" id="top" aria-labelledby="hero-title">

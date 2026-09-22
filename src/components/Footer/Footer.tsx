@@ -41,29 +41,56 @@ const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer__inner">
-        <a href="#top" className="footer__brand fade-up">
+        <a
+          href="#top"
+          className="footer__brand fade-up"
+          aria-label="Anastasia Paskaleva — back to top"
+        >
           Anastasia
         </a>
 
-        <div className="footer__socials fade-up">
-          <a href="mailto:your@email.com" aria-label="Email">
-            <FaEnvelope />
+        <div
+          className="footer__socials fade-up"
+          aria-label="Social media links"
+        >
+          <a href="mailto:your@email.com" aria-label="Send Anastasia an email">
+            <FaEnvelope aria-hidden="true" />
           </a>
 
-          <a href="#" target="_blank" rel="noreferrer" aria-label="Instagram">
-            <FaInstagram />
+          <a
+            href="#"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Open Anastasia's Instagram in a new tab"
+          >
+            <FaInstagram aria-hidden="true" />
           </a>
 
-          <a href="#" target="_blank" rel="noreferrer" aria-label="Facebook">
-            <FaFacebookF />
+          <a
+            href="#"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Open Anastasia's Facebook in a new tab"
+          >
+            <FaFacebookF aria-hidden="true" />
           </a>
 
-          <a href="#" target="_blank" rel="noreferrer" aria-label="TikTok">
-            <FaTiktok />
+          <a
+            href="#"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Open Anastasia's TikTok in a new tab"
+          >
+            <FaTiktok aria-hidden="true" />
           </a>
 
-          <a href="#" target="_blank" rel="noreferrer" aria-label="YouTube">
-            <FaYoutube />
+          <a
+            href="#"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Open Anastasia's YouTube in a new tab"
+          >
+            <FaYoutube aria-hidden="true" />
           </a>
         </div>
 
