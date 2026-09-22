@@ -826,3 +826,24 @@
         transition: none;
     }
 }
+
+/* REDUCED MOTION */
+
+@media (prefers-reduced-motion: reduce) {
+  .reels .fade-up {
+    opacity: 1;
+
+    transform: none;
+
+    transition: none;
+  }
+
+  .reel-card,
+  .reel-card__video,
+  .reel-card__control,
+  .reels__filter,
+  .reels__filter::after,
+  .reels__current button::after {
+    transition: none;
+  }
+}

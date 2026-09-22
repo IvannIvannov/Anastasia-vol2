@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 import "./Reels.css";
 
@@ -175,6 +175,8 @@ const Reels = () => {
 
   const videoRefs = useRef<Record<number, HTMLVideoElement | null>>({});
 
+  const shouldReduceMotion = useReducedMotion();
+
   useEffect(() => {
     const elements = document.querySelectorAll(".reels .fade-up");
 
@@ -209,6 +211,10 @@ const Reels = () => {
 
     return reels.filter((reel) => reel.category === activeCategory);
   }, [activeCategory]);
+
+  const activeCategoryLabel = activeCategory
+    ? categories.find((category) => category.value === activeCategory)?.label
+    : "Featured work";
 
   const stopAllVideos = () => {
     Object.values(videoRefs.current).forEach((video) => {
@@ -296,7 +302,7 @@ const Reels = () => {
   };
 
   return (
-    <section className="reels" id="reels">
+    <section className="reels" id="reels" aria-labelledby="reels-title">
       <div className="reels__header fade-up">
         <p className="reels__label">Work</p>
       </div>
@@ -305,7 +311,9 @@ const Reels = () => {
         <div className="fade-up">
           <span className="reels__eyebrow">Selected short-form work</span>
 
-          <h2 className="reels__title">Made to be watched.</h2>
+          <h2 id="reels-title" className="reels__title">
+            Made to be watched.
+          </h2>
         </div>
 
         <p className="reels__subtitle fade-up">
@@ -315,7 +323,11 @@ const Reels = () => {
       </div>
 
       <div className="reels__filters-wrapper fade-up">
-        <div className="reels__filters">
+        <div
+          className="reels__filters"
+          role="group"
+          aria-label="Filter reels by category"
+        >
           {categories.map((category) => {
             const count = reels.filter(
               (reel) => reel.category === category.value,
@@ -332,10 +344,14 @@ const Reels = () => {
                 }`}
                 onClick={() => handleCategoryChange(category.value)}
                 aria-pressed={isActive}
+                aria-controls="reels-grid"
+                aria-label={`${category.label}, ${count} ${
+                  count === 1 ? "reel" : "reels"
+                }`}
               >
                 <span>{category.label}</span>
 
-                <sup>{String(count).padStart(2, "0")}</sup>
+                <sup aria-hidden="true">{String(count).padStart(2, "0")}</sup>
               </button>
             );
           })}
@@ -343,16 +359,14 @@ const Reels = () => {
       </div>
 
       <div className="reels__current fade-up">
-        <span>
-          {activeCategory
-            ? categories.find((category) => category.value === activeCategory)
-                ?.label
-            : "Featured work"}
+        <span aria-live="polite" aria-atomic="true">
+          {activeCategoryLabel}
         </span>
 
         {activeCategory && (
           <button
             type="button"
+            aria-controls="reels-grid"
             onClick={() => {
               stopAllVideos();
               setActiveCategory(null);
@@ -363,8 +377,16 @@ const Reels = () => {
         )}
       </div>
 
-      <motion.div layout className="reels__grid">
-        <AnimatePresence mode="popLayout">
+      <motion.div
+        id="reels-grid"
+        layout={!shouldReduceMotion}
+        className="reels__grid"
+        role="list"
+        aria-label={`${activeCategoryLabel}, ${visibleReels.length} ${
+          visibleReels.length === 1 ? "project" : "projects"
+        }`}
+      >
+        <AnimatePresence mode="popLayout" initial={false}>
           {visibleReels.map((reel, index) => {
             const isPlaying = playingVideo === reel.id;
 
@@ -374,29 +396,46 @@ const Reels = () => {
               (category) => category.value === reel.category,
             )?.label;
 
+            const titleId = `reel-title-${reel.id}`;
+
+            const metaId = `reel-meta-${reel.id}`;
+
             return (
               <motion.article
-                layout
+                layout={!shouldReduceMotion}
                 key={reel.id}
                 className={`reel-card ${isPlaying ? "reel-card--playing" : ""}`}
-                initial={{
-                  opacity: 0,
-                  y: 16,
-                  scale: 0.99,
-                }}
+                role="listitem"
+                aria-labelledby={titleId}
+                aria-describedby={metaId}
+                initial={
+                  shouldReduceMotion
+                    ? false
+                    : {
+                        opacity: 0,
+                        y: 16,
+                        scale: 0.99,
+                      }
+                }
                 animate={{
                   opacity: 1,
                   y: 0,
                   scale: 1,
                 }}
-                exit={{
-                  opacity: 0,
-                  y: 10,
-                  scale: 0.99,
-                }}
+                exit={
+                  shouldReduceMotion
+                    ? {
+                        opacity: 0,
+                      }
+                    : {
+                        opacity: 0,
+                        y: 10,
+                        scale: 0.99,
+                      }
+                }
                 transition={{
-                  duration: 0.4,
-                  delay: Math.min(index * 0.03, 0.15),
+                  duration: shouldReduceMotion ? 0 : 0.4,
+                  delay: shouldReduceMotion ? 0 : Math.min(index * 0.03, 0.15),
                   ease: [0.22, 1, 0.36, 1],
                 }}
               >
@@ -412,6 +451,7 @@ const Reels = () => {
                     playsInline
                     loop
                     preload="none"
+                    aria-label={`${reel.title} video`}
                     onMouseEnter={(event) =>
                       playVideo(event.currentTarget, reel.id)
                     }
@@ -430,7 +470,12 @@ const Reels = () => {
                         : ""
                     }`}
                     type="button"
-                    aria-label={isPlaying ? "Pause video" : "Play video"}
+                    aria-label={
+                      isPlaying
+                        ? `Pause ${reel.title} video`
+                        : `Play ${reel.title} video`
+                    }
+                    aria-pressed={isPlaying}
                     onClick={() => {
                       const video = videoRefs.current[reel.id];
 
@@ -440,28 +485,30 @@ const Reels = () => {
                     }}
                   >
                     {isManuallyPaused ? (
-                      <span className="reel-card__pause">
+                      <span className="reel-card__pause" aria-hidden="true">
                         <span />
                         <span />
                       </span>
                     ) : (
-                      <span className="reel-card__play" />
+                      <span className="reel-card__play" aria-hidden="true" />
                     )}
                   </button>
 
-                  <span className="reel-card__index">
+                  <span className="reel-card__index" aria-hidden="true">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                 </div>
 
                 <div className="reel-card__info">
                   <div>
-                    <h3>{reel.title}</h3>
+                    <h3 id={titleId}>{reel.title}</h3>
 
                     {reel.client && <p>{reel.client}</p>}
                   </div>
 
-                  <span className="reel-card__category">{categoryLabel}</span>
+                  <span id={metaId} className="reel-card__category">
+                    {categoryLabel}
+                  </span>
                 </div>
               </motion.article>
             );
@@ -470,7 +517,9 @@ const Reels = () => {
       </motion.div>
 
       {visibleReels.length === 0 && (
-        <p className="reels__empty">More work coming soon.</p>
+        <p className="reels__empty" role="status">
+          More work coming soon.
+        </p>
       )}
     </section>
   );
